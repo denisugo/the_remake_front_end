@@ -1,0 +1,25 @@
+@import "../variables";
+
+.button {
+  background: $backgroundColor;
+  border: 4px solid $borderColor;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  // &:hover,
+  // &:focus {
+  &:hover {
+    background: $colorOne;
+  }
+
+  &:active {
+    background: $colorTwo;
+  }
+
+  p {
+    font-weight: bold;
+    color: $textColor;
+  }
+}

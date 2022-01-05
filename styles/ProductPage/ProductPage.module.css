@@ -1,0 +1,81 @@
+.container {
+  width: 100%;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 240px 1fr 60px 1fr;
+      grid-template-columns: 240px 1fr 60px 1fr;
+  -ms-grid-rows: 40px 200px 40px;
+      grid-template-rows: 40px 200px 40px;
+      grid-template-areas: "image name name name" "image desc desc desc" ". price count add";
+  color: #324248;
+}
+
+.container .preview {
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 2;
+  -ms-grid-column: 1;
+  grid-area: image;
+  border: 2px solid #696c75;
+}
+
+.container .name {
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 3;
+  grid-area: name;
+  margin: auto 20px;
+  font-size: 1.75rem;
+}
+
+.container .description {
+  -ms-grid-row: 2;
+  -ms-grid-column: 2;
+  -ms-grid-column-span: 3;
+  grid-area: desc;
+  margin: auto 20px;
+  font-size: 1.4rem;
+}
+
+.container .price {
+  -ms-grid-row: 3;
+  -ms-grid-column: 2;
+  grid-area: price;
+  justify-self: flex-end;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  font-size: 1.5rem;
+  -webkit-transform: translateY(3px);
+          transform: translateY(3px);
+}
+
+.container .quantity {
+  -ms-grid-row: 3;
+  -ms-grid-column: 3;
+  grid-area: count;
+  -ms-grid-column-align: center;
+      justify-self: center;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  margin: 0;
+  height: 40px;
+}
+
+.container .add {
+  -ms-grid-row: 3;
+  -ms-grid-column: 4;
+  grid-area: add;
+}
+
+.container .you_should_login {
+  -ms-grid-row: 3;
+  -ms-grid-column: 4;
+  grid-area: add;
+}
+
+.container .you_should_login button {
+  width: 100%;
+  height: 100%;
+}
+/*# sourceMappingURL=ProductPage.module.css.map */

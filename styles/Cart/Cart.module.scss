@@ -1,0 +1,64 @@
+@import "../variables";
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: $textColor;
+
+  .items {
+    width: 100%;
+    margin-bottom: 30px;
+
+    .item {
+      width: 90%;
+      margin: 10px auto;
+      display: flex;
+      align-items: center;
+      border: 2px solid $borderColor;
+      // justify-content: center;
+
+      .preview {
+        width: 100px;
+      }
+      .name {
+        margin: 20px;
+        font-size: 1.5rem;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .price {
+        margin-left: auto;
+        margin-right: 10px;
+        font-weight: bold;
+      }
+      //   .quantity {
+      //   }
+      .cancel_button {
+        border: 4px solid $cancelColor;
+        margin-left: 10px;
+        margin-right: 10px;
+        p {
+          color: $cancelColor;
+        }
+      }
+    }
+  }
+
+  hr {
+    border-top: 3px dashed $colorOne;
+    width: 90%;
+  }
+
+  .total {
+    align-self: flex-end;
+    margin-right: 10%;
+  }
+
+  .link_button {
+    margin: 20px;
+  }
+}

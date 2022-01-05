@@ -1,0 +1,20 @@
+@import "../variables";
+
+.form {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+
+  .form_item {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 10px auto;
+    font-size: 0.9rem;
+  }
+}

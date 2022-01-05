@@ -1,0 +1,42 @@
+@import "../variables";
+
+.product {
+  width: 250px;
+  height: 350px;
+  display: block;
+  border: 4px solid $borderColor;
+  color: $textColor;
+  margin: 20px;
+
+  .preview {
+    margin-bottom: 10px;
+    mask-image: linear-gradient(
+      rgba(0, 0, 0, 1),
+      rgba(0, 0, 0, 1),
+      rgba(0, 0, 0, 1),
+      rgba(0, 0, 0, 0)
+    );
+  }
+  .name {
+    font-size: 1.1rem;
+    padding: 5px 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .description {
+    padding: 5px 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .price {
+    text-align: end;
+    padding: 5px 10px;
+    font-weight: bold;
+
+    &::before {
+      content: "$";
+    }
+  }
+}

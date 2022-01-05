@@ -1,0 +1,13 @@
+.input {
+  margin: 15px 10px;
+  padding-left: 10px;
+  height: 30px;
+  border-radius: 0;
+  outline: none;
+  border: 2px solid #696c75;
+}
+
+.input:invalid:required {
+  border: 2px solid #d3aa14;
+}
+/*# sourceMappingURL=Input.module.css.map */

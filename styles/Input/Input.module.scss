@@ -1,0 +1,14 @@
+@import "../variables";
+
+.input {
+  margin: 15px 10px;
+  padding-left: 10px;
+  height: 30px;
+  border-radius: 0;
+  outline: none;
+  border: 2px solid $borderColor;
+
+  &:invalid:required {
+    border: 2px solid $requiredColor;
+  }
+}

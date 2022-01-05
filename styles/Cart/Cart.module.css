@@ -1,0 +1,78 @@
+.container {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: #324248;
+}
+
+.container .items {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.container .items .item {
+  width: 90%;
+  margin: 10px auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border: 2px solid #696c75;
+}
+
+.container .items .item .preview {
+  width: 100px;
+}
+
+.container .items .item .name {
+  margin: 20px;
+  font-size: 1.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.container .items .item .price {
+  margin-left: auto;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.container .items .item .cancel_button {
+  border: 4px solid #d25314;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.container .items .item .cancel_button p {
+  color: #d25314;
+}
+
+.container hr {
+  border-top: 3px dashed #d1d3db;
+  width: 90%;
+}
+
+.container .total {
+  -ms-flex-item-align: end;
+      align-self: flex-end;
+  margin-right: 10%;
+}
+
+.container .link_button {
+  margin: 20px;
+}
+/*# sourceMappingURL=Cart.module.css.map */

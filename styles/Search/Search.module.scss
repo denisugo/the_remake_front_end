@@ -1,0 +1,15 @@
+@import "../variables";
+
+.search {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .select_by_category {
+    margin: 15px 10px;
+    height: 30px;
+    border-radius: 0;
+    border: 2px solid $borderColor;
+  }
+}
