@@ -5,10 +5,10 @@ import Header from "../components/Header/Header";
 import ProductList from "../components/ProductList/ProductList";
 import Search from "../components/Search/Search";
 import { endpoints, routes } from "../config/constants";
-import { initUser } from "../features/UserSlice/UserSlice";
-import { wrapper } from "../app/store";
+import Button from "../components/Button/Button";
+import NewProduct from "../components/NewProduct/NewProduct";
 
-function Home({ list }) {
+function Home({ list, user }) {
   // export default function Home({ list, user, isMobile }) {
   //TODO: select user, render 'add new' button if admin
 
@@ -20,12 +20,14 @@ function Home({ list }) {
       <Header />
       <Search list={list} callback={setProductList} />
       <ProductList list={productList} />
+      <NewProduct callback={setProductList} />
     </>
   );
 }
 
 export default Home;
 
+//TODO: Add decryption of JWT and retrieve a user
 export const getServerSideProps = async (context) => {
   // export const getServerSideProps = wrapper.getServerSideProps(
   //   (store) => async (context) => {
@@ -45,7 +47,7 @@ export const getServerSideProps = async (context) => {
   if (!response.ok)
     return {
       props: {
-        list: null,
+        list: [],
       },
     };
 

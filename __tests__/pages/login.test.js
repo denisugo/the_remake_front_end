@@ -1,6 +1,5 @@
-import * as reactRedux from "react-redux";
-import * as UserSlice from "../../features/UserSlice/UserSlice";
 import * as router from "next/router";
+import * as jwt from "jsonwebtoken";
 
 import login from "../../pages/login";
 import {
@@ -11,23 +10,19 @@ import {
 } from "../../utils/testUtils.js";
 
 describe("Login page", () => {
-  let dispatch;
   let wrapper;
 
   beforeEach(() => {
-    //  Setup for react redux
-    dispatch = jest.fn();
+    //* Reset fetch mock
+    fetch.resetMocks();
 
-    reactRedux.useDispatch = jest.fn().mockReturnValue(dispatch);
-    reactRedux.useSelector = jest.fn().mockReturnValue(true);
+    //* jwt setup
+    jwt.default.sign = jest.fn();
 
-    UserSlice.selectUser = jest.fn();
-    UserSlice.selectUserError = jest.fn();
-    UserSlice.logInUser = jest.fn();
-
-    //  Next.js router setup
+    //*  Next.js router setup
     router.default.push = jest.fn();
 
+    //* Wrap the component (page)
     wrapper = setUp(login);
   });
 
@@ -43,12 +38,23 @@ describe("Login page", () => {
   });
 
   describe("Logging in", () => {
-    // Unable to test sumbitting after button clicking
+    //! Unable to test sumbitting after button clicking
     describe("Both fields filled out", () => {
-      it("Should log in", () => {
+      it("Should log in", async () => {
+        //? Mocking fetch
+        fetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => {
+            return {};
+          },
+        });
+
+        //? Getting form object
         const form = findByComponent("form", wrapper);
         expect(form.length).toBe(1);
 
+        //? Setting up values in password field an username field
+        //? The real username and password aren't required here. The success case will be simulated by jest.fn()
         const usernameField = findByComponent("Input", wrapper).first();
         usernameField.dive().simulate("change", {
           target: { name: "Username", value: "spam" },
@@ -59,11 +65,48 @@ describe("Login page", () => {
           .dive()
           .simulate("change", { target: { name: "Password", value: "spam" } });
 
+        //? Finally submitting the form
         form.simulate("submit", { preventDefault: jest.fn() });
 
-        expect(dispatch.mock.calls.length).toBe(1);
-        expect(reactRedux.useDispatch.mock.calls.length).toBe(3); // Should be 3 because useState rerender the component
-        expect(reactRedux.useSelector.mock.calls.length).toBe(6); // Should be 6 because useState rerender the component
+        //? This will execute async function in login.js immidiately
+        await new Promise((res) => setImmediate(res));
+
+        expect(jwt.default.sign.mock.calls.length).toBe(1);
+        expect(router.default.push.mock.calls.length).toBe(1);
+      });
+      it("Should fail logining in", async () => {
+        //? Mocking fetch
+        fetch.mockResolvedValueOnce({
+          ok: false,
+          json: () => {
+            return {};
+          },
+        });
+
+        //? Getting form object
+        const form = findByComponent("form", wrapper);
+        expect(form.length).toBe(1);
+
+        //? Setting up values in password field an username field
+        //? The real username and password aren't required here. The success case will be simulated by jest.fn()
+        const usernameField = findByComponent("Input", wrapper).first();
+        usernameField.dive().simulate("change", {
+          target: { name: "Username", value: "spam" },
+        });
+
+        const passwordField = findByComponent("Input", wrapper).at(1);
+        passwordField
+          .dive()
+          .simulate("change", { target: { name: "Password", value: "spam" } });
+
+        //? Finally submitting the form
+        form.simulate("submit", { preventDefault: jest.fn() });
+
+        //? This will execute async function in login.js immidiately
+        await new Promise((res) => setImmediate(res));
+
+        expect(jwt.default.sign.mock.calls.length).toBe(0);
+        expect(router.default.push.mock.calls.length).toBe(0);
       });
     });
   });

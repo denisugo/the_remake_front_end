@@ -52,7 +52,7 @@ describe("getServerSideProps in index.js", () => {
     const { props } = await getServerSideProps(context);
 
     expect(typeof props).toBe("object");
-    expect(props.list).toBe(null);
+    expect(JSON.stringify(props.list)).toBe(JSON.stringify([]));
     // expect(UserSlice.initUser.mock.calls.length).toBe(0);
     // expect(props.isMobile).toBe(false);
   });

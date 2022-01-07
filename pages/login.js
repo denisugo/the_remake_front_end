@@ -1,39 +1,60 @@
 import react, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+
 import router from "next/router";
+import jwt from "jsonwebtoken";
+import Cookies from "universal-cookie";
 
 import Button from "../components/Button/Button";
 import Input from "../components/Input/Input";
 import Meta from "../components/Head/Meta";
 import style from "../styles/Login/Login.module.css";
-import {
-  logInUser,
-  selectUser,
-  selectUserError,
-} from "../features/UserSlice/UserSlice";
-import { routes } from "../config/constants";
+
+import { endpoints, jwtConfig, routes } from "../config/constants";
 
 function Login({ isMobile }) {
-  // Inputs setup
+  //* Inputs setup
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  // Redux setup
-  const dispatch = useDispatch();
-  const user = useSelector(selectUser);
-  const error = useSelector(selectUserError);
+  const handleLogin = async (event) => {
+    event.preventDefault();
 
-  useEffect(() => {
-    if (user && !error) router.push(routes.user);
-    if (error) {
+    //* Retrieving a user
+    const url = `${process.env.HOST}${endpoints.login()}`;
+
+    //? Body should be ecoded as x-www-form-urlencoded
+    const body = `${"username"}=${encodeURIComponent(
+      username
+    )}&${"password"}=${encodeURIComponent(password)}`;
+
+    const fetchedUser = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      body,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+      },
+    });
+
+    //? If response is not ok, that means that an error occured
+    //? So, user has to get a feedback
+    if (!fetchedUser.ok) {
       setPassword("");
       setUsername("");
+      return;
     }
-  }, [user, error]);
 
-  const handleLogin = (event) => {
-    event.preventDefault();
-    dispatch(logInUser({ username, password }));
+    const user = await fetchedUser.json();
+
+    //* Set token to cookies
+    const token = jwt.sign(user, jwtConfig.key);
+    const cookies = new Cookies();
+    cookies.set("user", token, { path: "/", maxAge: jwtConfig.maxAge });
+    //console.log(cookies.get("user"));
+
+    //* Redirecting to user page
+    router.push(routes.user);
   };
 
   return (
@@ -94,3 +115,52 @@ function Login({ isMobile }) {
 }
 
 export default Login;
+
+export const getServerSideProps = async (context) => {
+  //? Check if user cookie is set
+  //? If so, try to retrieve a user
+  if (!context.req.cookies["connect.sid"])
+    return {
+      props: {},
+    };
+
+  //* Retrieving a user
+  const url = `${process.env.HOST}${endpoints.user()}`;
+
+  const fetchedUser = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+      Cookie: `connect.sid=${context.req.cookies["connect.sid"]}`,
+    },
+  });
+
+  //? If response is not ok, that means that an error occured
+  //? It Should also connect.sid and possible user from coockies
+  if (!fetchedUser.ok) {
+    context.res.setHeader("Set-cookie", [
+      "connect.sid=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+      "user=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+    ]);
+    return {
+      props: {},
+    };
+  }
+
+  const user = await fetchedUser.json();
+
+  //* Set token to cookies
+  const token = jwt.sign(user, jwtConfig.key);
+  context.res.setHeader(
+    "Set-cookie",
+    `user=${token}; path=${"/"}; Max-Age=${jwtConfig.maxAge}`
+  );
+
+  return {
+    redirect: {
+      destination: routes.user,
+      permanent: false,
+    },
+  };
+};

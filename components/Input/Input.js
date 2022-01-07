@@ -12,6 +12,7 @@ function Input({
   className = "",
   label = "input",
   pattern = undefined,
+  ...otherProps
 }) {
   return (
     <input
@@ -26,7 +27,9 @@ function Input({
       autoComplete="off"
       name={label}
       aria-label={label}
-      data-testid="input"
+      data-testid={
+        otherProps["data-testid"] ? otherProps["data-testid"] : "input"
+      }
       pattern={pattern}
     />
   );

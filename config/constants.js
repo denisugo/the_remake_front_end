@@ -12,10 +12,15 @@ export const routes = {
 export const endpoints = {
   products: () => "/products",
   login: () => "/login",
-  logout: (userId) => `/users/${userId}/logout`,
-  user: (userId) => `/users/${userId}`,
+  logout: () => `/users/logout`,
+  user: () => `/users`,
   register: () => "/register",
   orders: (userId) => `/users/${userId}/orders`,
   cart: (userId) => `/users/${userId}/cart`,
   checkout: (userId) => `/users/${userId}/cart/checkout`,
+};
+
+export const jwtConfig = {
+  key: "microcat",
+  maxAge: 60 * 60 * 24, //? one day in seconds
 };

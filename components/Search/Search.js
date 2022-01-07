@@ -42,6 +42,7 @@ function Search({ list, callback }) {
         label="Search"
         value={inputed}
         callback={handleInput}
+        data-testid="search-input"
       />
     </div>
   );

@@ -1,50 +1,42 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import router, { useRouter } from "next/router";
+import jwt from "jsonwebtoken";
+import Cookies from "universal-cookie";
 
 import Input from "../components/Input/Input";
 import Button from "../components/Button/Button";
 import Meta from "../components/Head/Meta";
-import {
-  getUser,
-  initUser,
-  logOutUser,
-  selectUser,
-  selectUserError,
-  updateUser,
-} from "../features/UserSlice/UserSlice";
-import { routes } from "../config/constants";
+
+import { endpoints, jwtConfig, routes } from "../config/constants";
 import style from "../styles/User/User.module.css";
-import { store, wrapper } from "../app/store";
 
-function User() {
-  // redux setup
+function User({ user }) {
+  // const username = user ? user.username : undefined;
+  // const password = "*******";
+  // const email = user ? user.email : undefined;
+  // const firstName = user ? user.first_name : undefined;
+  // const lastName = user ? user.last_name : undefined;
 
-  const user = useSelector(selectUser);
-  const dispatch = useDispatch();
+  //* State setup
+  //* User fields setup
+  const [username, setUsername] = useState(user ? user.username : undefined);
+  const [password, setPassword] = useState("*******");
+  const [email, setEmail] = useState(user ? user.email : undefined);
+  const [firstName, setFirstName] = useState(
+    user ? user.first_name : undefined
+  );
+  const [lastName, setLastName] = useState(user ? user.last_name : undefined);
 
-  React.useEffect(() => {
-    if (!user) router.push(routes.login);
-  }, [user]);
-
-  const username = user ? user.username : undefined;
-  const password = "*******";
-  const email = user ? user.email : undefined;
-  const firstName = user ? user.first_name : undefined;
-  const lastName = user ? user.last_name : undefined;
-  // state setup
-  // const [username, setUsername] = useState(user ? user.username : undefined);
-  // const [password, setPassword] = useState("*******");
-  // const [email, setEmail] = useState(user ? user.email : undefined);
-  // const [firstName, setFirstName] = useState(
-  //   user ? user.first_name : undefined
-  // );
-  // const [lastName, setLastName] = useState(user ? user.last_name : undefined);
-
+  //* Visibility of edit box setup
   const [editBoxVisible, setEditBoxVisible] = useState(false);
+
+  //* field adn value setup
+  //? It should be set for futher sending to the server
   const [fieldName, setFieldName] = useState(undefined);
   const [fieldValue, setFieldValue] = useState("");
 
+  //* Pattern setup
   let pattern = "";
   if (fieldName === "username") {
     pattern = "([a-z]|[0-9]){2,50}";
@@ -63,22 +55,98 @@ function User() {
   }
 
   const editButtonHandler = (field) => {
+    //* Show up editbox
+    //* Set corresponding name of fieldName
     setFieldName(field);
     setEditBoxVisible(true);
   };
 
   const cancelButtonHandler = () => {
+    //* Hide down editbox
+    //* Reset field and value settings
     setFieldName(undefined);
     setFieldValue("");
     setEditBoxVisible(false);
   };
 
-  const submitFormHandler = () => {
+  const submitFormHandler = async (e) => {
+    e.preventDefault();
+
+    //? Body should have x-www-form-urlencoded format
+    const body = `${"field"}=${encodeURIComponent(
+      fieldName
+    )}&${"value"}=${encodeURIComponent(fieldValue)}`;
+
+    //? Generating url
+    const url = `${process.env.HOST}${endpoints.user()}`;
+
+    //? Should POST data to the server
+    const fetched = await fetch(url, {
+      method: "PUT",
+      credentials: "include",
+      body,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+      },
+    });
+
+    //? If update was unsuccessfull, it should display an alert and return now
+    if (!fetched.ok)
+      return alert(
+        "An error occured. This field cannot be updated. Please try again"
+      );
+
+    //? Then it should set new jwt
+    //* Set token to cookies
+    const cookies = new Cookies();
+    const token = jwt.sign({ ...user, [fieldName]: fieldValue }, jwtConfig.key);
+    cookies.set("user", token, { path: "/", maxAge: jwtConfig.maxAge });
+
+    //? Now it should set new state to display a new value
+    if (fieldName === "username") {
+      setUsername(fieldValue);
+    }
+    if (fieldName === "password") {
+      setPassword(fieldValue);
+    }
+    if (fieldName === "email") {
+      setEmail(fieldValue);
+    }
+    if (fieldName === "last_name") {
+      setLastName(fieldValue);
+    }
+    if (fieldName === "first_name") {
+      setFirstName(fieldValue);
+    }
+
+    //* Hide down editbox
+    //* Reset field and value settings
     setFieldName(undefined);
     setFieldValue("");
     setEditBoxVisible(false);
-    //redux function
-    dispatch(updateUser({ field: fieldName, value: fieldValue, id: user.id }));
+  };
+
+  const logoutHandler = async () => {
+    //* Generate url
+    const url = `${process.env.HOST}${endpoints.logout()}`;
+
+    //* Send a logout request
+    //? It will also reset connect.id cookie
+    await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    //* Reset user cookie
+    const cookies = new Cookies();
+    cookies.remove("user");
+
+    //* Redirect to login page
+    router.push(routes.login);
   };
 
   return (
@@ -96,7 +164,8 @@ function User() {
                 text="Edit"
                 height={50}
                 width={50}
-                label="Edit-first-name"
+                label="Edit first name"
+                data-testid="first-name-button"
                 fontSize={17}
                 callback={() => editButtonHandler("first_name")}
               />
@@ -109,7 +178,8 @@ function User() {
                 text="Edit"
                 height={50}
                 width={50}
-                label="Edit-last-name"
+                label="Edit last name"
+                data-testid="last-name-button"
                 fontSize={17}
                 callback={() => editButtonHandler("last_name")}
               />
@@ -122,7 +192,8 @@ function User() {
                 text="Edit"
                 height={50}
                 width={50}
-                label="Edit-email"
+                label="Edit email"
+                data-testid="email-button"
                 fontSize={17}
                 callback={() => editButtonHandler("email")}
               />
@@ -135,7 +206,8 @@ function User() {
                 text="Edit"
                 height={50}
                 width={50}
-                label="Edit-fusername"
+                label="Edit username"
+                data-testid="username-button"
                 fontSize={17}
                 callback={() => editButtonHandler("username")}
               />
@@ -148,7 +220,8 @@ function User() {
                 text="Edit"
                 height={50}
                 width={50}
-                label="Edit-password"
+                label="Edit password"
+                data-testid="password-button"
                 fontSize={17}
                 callback={() => editButtonHandler("passsword")}
               />
@@ -160,10 +233,7 @@ function User() {
             width={250}
             label="Logout"
             fontSize={17}
-            callback={() => {
-              dispatch(logOutUser(user.id));
-              router.push(routes.login);
-            }}
+            callback={logoutHandler}
           />
         </>
       )}
@@ -221,79 +291,23 @@ function User() {
 
 export default User;
 
-// export const getServerSideProps = async (context) => {
-//   if (!context.req.cookies["connect.sid"])
-//     return {
-//       redirect: {
-//         destination: routes.login,
-//         permanent: false,
-//       },
-//     };
+export const getServerSideProps = async (context) => {
+  //? Check if user cookie is set
+  //? If not, redirect to login page to attempt to sign in
+  if (!context.req.cookies.user)
+    return {
+      redirect: {
+        destination: routes.login,
+        permanent: false,
+      },
+    };
 
-//   return {
-//     props: {
-//       cookie: context.req.cookies["connect.sid"],
-//     },
-//   };
-// };
+  //? Here it is necessary to decode a user object, recieved from cookie
+  const user = jwt.verify(context.req.cookies.user, jwtConfig.key);
 
-// export const getServerSideProps = wrapper.getServerSideProps(
-//   (store) => async (context) => {
-//     store.dispatch(
-//       initUser({ username: "jor", email: "", last_name: "", first_name: "" })
-//     );
-//     const user = selectUser(store.getState());
-//     console.log(user);
-//     if (user)
-//       return {
-//         props: {
-//           username: user.username,
-//           password: "******",
-//           email: user.email,
-//           firstName: user.first_name,
-//           lastName: user.last_name,
-//         },
-//       };
-//     return {
-//       props: {
-//         username: "username",
-//         password: "******",
-//         email: "your@email.com",
-//         firstName: "Name",
-//         lastName: "Surname",
-//         // username: user.username,
-//         // password: "******",
-//         // email: user.email,
-//         // firstName: user.first_name,
-//         // lastName: user.last_name,
-//       },
-//     };
-//   }
-// );
-
-// export const getServerSideProps = wrapper.getServerSideProps(
-//   (store) => async (context) => {
-//     await store.dispatch(
-//       getUser(`connect.sid=${context.req.cookies["connect.sid"]}`)
-//     );
-//     const user = selectUser(store.getState());
-
-//     if (user)
-//       return {
-//         props: {
-//           user, // not used
-//         },
-//       };
-
-//     context.res.setHeader(
-//       "Set-cookie",
-//       "connect.sid=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
-//     );
-//     return {
-//       redirect: {
-//         destination: routes.login,
-//         permanent: false,
-//       },
-//     };
-//   }
-// );
+  return {
+    props: {
+      user,
+    },
+  };
+};

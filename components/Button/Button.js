@@ -9,13 +9,15 @@ function Button({
   label = "button",
   className = "",
   disabled = false,
+  ...otherProps
 }) {
   return (
     <button
-      //className={style.button}
       className={`${style.button} ${className}`}
       style={{ width, height, fontSize }}
-      data-testid="button"
+      data-testid={
+        otherProps["data-testid"] ? otherProps["data-testid"] : "button"
+      }
       role="button"
       aria-label={label}
       onClick={callback}

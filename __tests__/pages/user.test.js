@@ -2,6 +2,7 @@ import * as reactRedux from "react-redux";
 import * as UserSlice from "../../features/UserSlice/UserSlice";
 import * as router from "next/router";
 import React from "react";
+import * as jwt from "jsonwebtoken";
 
 import user from "../../pages/user";
 import {
@@ -12,7 +13,6 @@ import {
 } from "../../utils/testUtils.js";
 
 describe("User page", () => {
-  let dispatch;
   let wrapper;
 
   const userObject = {
@@ -24,20 +24,20 @@ describe("User page", () => {
   };
 
   beforeEach(() => {
-    //  Setup for react redux
-    dispatch = jest.fn();
+    //* Reset fetch mock
+    fetch.resetMocks();
 
-    reactRedux.useDispatch = jest.fn().mockReturnValue(dispatch);
-    reactRedux.useSelector = jest.fn().mockReturnValue(userObject);
+    //* jwt setup
+    jwt.default.sign = jest.fn();
 
-    UserSlice.selectUser = jest.fn();
-    //   UserSlice.selectUserError = jest.fn();
-    //   UserSlice.logInUser = jest.fn();
+    //* Mock alert
+    global.alert = jest.fn();
 
-    //  Next.js router setup
+    //*  Next.js router setup
     router.default.push = jest.fn();
 
-    wrapper = setUp(user);
+    //* Wrap it!
+    wrapper = setUp(user, { user: userObject });
   });
 
   describe("Rendering", () => {
@@ -54,67 +54,111 @@ describe("User page", () => {
       expect(username.text()).toBe(userObject.username);
       expect(router.default.push.mock.calls.length).toBe(0);
     });
-    it("Should redirect to login page when no user provided", () => {
-      reactRedux.useSelector = jest.fn().mockReturnValue(null);
-      UserSlice.selectUser = jest.fn();
-      router.default.push = jest.fn();
-      jest.spyOn(React, "useEffect").mockImplementationOnce((f) => f());
-      wrapper = setUp(user);
-      const username = findByDataTest("username", wrapper);
-      expect(username.text()).toBe("");
-      expect(reactRedux.useSelector.mock.calls.length).toBe(1);
-      expect(router.default.push.mock.calls.length).toBe(1);
-    });
   });
   describe("Logout", () => {
-    it("Should redirect to login", () => {
+    it("Should redirect to login", async () => {
       wrapper = setUp(user);
       const button = findByComponent("Button", wrapper).at(5);
 
+      //? Simulating button click
       button.dive().simulate("click");
 
-      expect(dispatch.mock.calls.length).toBe(1);
+      //? This will execute async function in login.js immidiately
+      await new Promise((res) => setImmediate(res));
+
+      expect(router.default.push.mock.calls.length).toBe(1);
     });
   });
   describe("Edit box", () => {
     it("Should show editbox", () => {
       wrapper = setUp(user);
-      const button = findByComponent("Button", wrapper).at(3); //username
+      const usernameButton = findByDataTest("username-button", wrapper).at(0);
 
-      button.dive().simulate("click");
-      //await new Promise(res=>setImmediate(res))
+      //? Simulating button click
+      usernameButton.dive().simulate("click");
+
+      //? Updating UI, so now it renders editbox
       wrapper.update();
 
       let editBox = findByDataTest("edit-box", wrapper);
-
       expect(editBox.length).toBe(1);
 
       const cancel = findByComponent("Button", wrapper).at(1);
+      //? Simulating button click
       cancel.dive().simulate("click");
 
+      //? Updating UI, so now it doesn't render editbox
       wrapper.update();
 
       editBox = findByDataTest("edit-box", wrapper);
-
       expect(editBox.length).toBe(0);
     });
-    it("Should update user info", () => {
+
+    it("Should update user info when server sends status 200", async () => {
+      //? Mocking fetch
+      //? json() can return anything
+      //? Only ok value is checked
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => [],
+      });
       wrapper = setUp(user);
-      const button = findByComponent("Button", wrapper).at(3); //username
+      const usernameButton = findByDataTest("username-button", wrapper).at(0);
 
-      button.dive().simulate("click");
+      //? Simulating button click
+      usernameButton.dive().simulate("click");
 
+      //? Updating UI, so now it  renders editbox
       wrapper.update();
 
       const input = findByComponent("Input", wrapper);
 
+      //? Setting up a new value
       input
         .dive()
         .simulate("change", { target: { name: "username", value: "spam" } });
 
+      //? Submitting changes
       const accept = findByComponent("form", wrapper).at(0);
-      accept.simulate("submit");
-      expect(dispatch.mock.calls.length).toBe(1);
+      accept.simulate("submit", { preventDefault: jest.fn() });
+
+      //? This will execute async function in user.js immidiately
+      await new Promise((res) => setImmediate(res));
+
+      expect(jwt.default.sign.mock.calls.length).toBe(1);
     });
+  });
+  it("Should NOT update user info when server sends status 400", async () => {
+    //? Mocking fetch
+    //? json() can return anything
+    //? Only ok value is checked
+    fetch.mockResolvedValueOnce({
+      ok: false,
+      json: () => [],
+    });
+    wrapper = setUp(user);
+    const usernameButton = findByDataTest("username-button", wrapper).at(0);
+
+    //? Simulating button click
+    usernameButton.dive().simulate("click");
+
+    //? Updating UI, so now it  renders editbox
+    wrapper.update();
+
+    const input = findByComponent("Input", wrapper);
+
+    //? Setting up a new value
+    input
+      .dive()
+      .simulate("change", { target: { name: "username", value: "spam" } });
+
+    //? Submitting changes
+    const accept = findByComponent("form", wrapper).at(0);
+    accept.simulate("submit", { preventDefault: jest.fn() });
+
+    //? This will execute async function in user.js immidiately
+    await new Promise((res) => setImmediate(res));
+
+    expect(jwt.default.sign.mock.calls.length).toBe(0);
   });
 });
