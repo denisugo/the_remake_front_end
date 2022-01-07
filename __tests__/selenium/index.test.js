@@ -27,66 +27,74 @@ describe("Selenium Main page", () => {
   });
 
   describe("User flow", () => {
+    //* Credentials
+    const nonAdminUsername = "davy000";
+    const nonAdminPassword = "treasure";
+    const adminUsername = "jb";
+    const adminPassword = "secret";
+
     it("Should open main page", async () => {
-      //Page title
+      //* Page title
       const title = await driver.getTitle();
       expect(title).toBe("Main page");
 
-      // Nav bar conten
+      //* Nav bar conten
       const svgs = await findByComponentSelenium("svg", driver); // Navigation icons
       expect(svgs.length).toBe(3);
       const logo = await findByDataTestSelenium("logo", driver);
       expect(logo.length).toBe(1);
-
-      // Main page content
-      const header = await findByDataTestSelenium("header", driver);
-      expect(header.length).toBe(1);
     });
 
     it("Should redirect to login page, when no user cookies provided", async () => {
+      //* Locate a link to login page and click on it
+      //? Link is a Next.js, so I unable to set its data-testid up.
+      //? Therefore, selecting with array indeces is used here.
       const navigation = await findByDataTestSelenium("navigation", driver);
       expect(navigation.length).toBe(1);
       const link = (await findByComponentSelenium("a", navigation[0]))[2]; //  user link
 
-      let actions = driver.actions({ async: true });
-      await actions.move({ origin: link }).press().release().perform();
+      link.click();
 
+      //* Wait for redirection
       await driver.wait(until.urlIs("http://localhost:3000/login"), 3000);
-      const url = await driver.getCurrentUrl();
-      expect(url).toBe(`http://localhost:3000/login`);
     });
 
-    //   It will create a user cookie for futher updating its details
+    //? It will create a user cookie for futher updating its details
     it("Should log in", async () => {
-      const button = (await findByDataTestSelenium("button", driver))[0]; //  Log me in
-      const usernameField = (await findByDataTestSelenium("input", driver))[0];
-      const passwordField = (await findByDataTestSelenium("input", driver))[1];
+      //* Locate inputs and insert credentials
+      const usernameField = (
+        await findByDataTestSelenium("username-input", driver)
+      )[0];
+      const passwordField = (
+        await findByDataTestSelenium("password-input", driver)
+      )[0];
 
       await usernameField.sendKeys(nonAdminUsername);
       await passwordField.sendKeys(nonAdminPassword);
 
-      const actions = driver.actions({ async: true });
-      await actions.move({ origin: button }).press().release().perform();
+      //* Locate login button and click on it
+      const button = (await findByDataTestSelenium("login-button", driver))[0];
+      button.click();
 
+      //* Wait for redirection
       await driver.wait(until.urlIs("http://localhost:3000/user"), 3000);
-      const url = await driver.getCurrentUrl();
-      expect(url).toBe(`http://localhost:3000/user`);
 
-      //cookie = await driver.manage().getCookies()[0];
+      //? Going back to the main page
       await driver.get("http://localhost:3000/");
     });
 
     it("Should redirect to user page, when user cookies provided", async () => {
+      //* Locate a link to login page and click on it
+      //? Link is a Next.js, so I unable to set its data-testid up.
+      //? Therefore, selecting with array indeces is used here.
       const navigation = await findByDataTestSelenium("navigation", driver);
       expect(navigation.length).toBe(1);
       const link = (await findByComponentSelenium("a", navigation[0]))[2]; //  user link
 
-      let actions = driver.actions({ async: true });
-      await actions.move({ origin: link }).press().release().perform();
+      link.click();
 
+      //* Wait for redirection
       await driver.wait(until.urlIs("http://localhost:3000/user"), 3000);
-      const url = await driver.getCurrentUrl();
-      expect(url).toBe(`http://localhost:3000/user`);
     });
   });
 
@@ -96,72 +104,71 @@ describe("Selenium Main page", () => {
     });
 
     it("Should filter products based on category selector", async () => {
-      // Checks the number of products
+      //* Checks the number of products
+      //? 6 is the default value
       let products = await findByDataTestSelenium("product", driver);
       expect(products.length).toBe(6);
 
-      // Should find 1 select component
+      //* Should find 1 select component
       const selects = await findByComponentSelenium("select", driver);
       expect(selects.length).toBe(1);
       const select = selects[0];
 
-      // Clicks on the select component
+      //* Clicks on the select component
       select.click();
 
-      // Should show 4 options
-      const options = await findByComponentSelenium("option", driver);
-      expect(options.length).toBe(4);
-      const healthOption = options[1]; // health category
+      //* Should find 'health' option
+      const healthOption = (
+        await findByDataTestSelenium("health-option", driver)
+      )[0];
 
-      // Clicks on the selected option
-      await healthOption.click();
+      //* Clicks on the selected option
+      healthOption.click();
 
-      // The number of products should be filtered now
+      //* The number of products should be filtered now
       await driver.wait(async () => {
         products = await findByDataTestSelenium("product", driver);
         return products.length === 4;
       }, 3000);
-      expect(products.length).toBe(4);
     });
 
     it("Should filter products based on name input", async () => {
-      // Checks the number of products
+      //* Checks the number of products
+      //? 6 is the default value
       let products = await findByDataTestSelenium("product", driver);
       expect(products.length).toBe(6);
 
-      // Should find 1 input component
+      //* Should find 1 input component
       const inputs = await findByComponentSelenium("input", driver);
       expect(inputs.length).toBe(1);
       const input = inputs[0];
 
-      // Enters a key to the input component
+      //* Insert a key to the input component
       await input.sendKeys("tab");
 
-      // The number of products should be filtered now
+      //* The number of products should be filtered now
       await driver.wait(async () => {
         products = await findByDataTestSelenium("product", driver);
         return products.length === 2;
       }, 3000);
-      expect(products.length).toBe(2);
     });
   });
   describe("Redirection", () => {
     it("redirect to product page", async () => {
+      //? This will reset all filters
       await driver.get("http://localhost:3000");
 
-      // Selects first product
+      //* Selects first product
       const products = await findByDataTestSelenium("product", driver);
       const product = products[0];
       product.click();
 
-      // Waits until redirection
+      //* Waits until redirection
       await driver.wait(async () => {
-        // Tests if a new url contains the product endpoint
+        //* Tests if a new url contains the product endpoint
         const testUrl = new RegExp("http://localhost:3000/product", "i");
         return testUrl.exec(await driver.getCurrentUrl());
       }, 3000);
-      const url = await driver.getCurrentUrl();
-      console.log(url);
     });
   });
 });

@@ -25,8 +25,10 @@ describe("Selenium User page", () => {
     await driver.quit();
   });
 
-  //   This test was copied from registration page test suit.
-  //   It will create a user for futher updating its details
+  //!   This test was copied from registration page test suit.
+  //!   It will create a user for futher updating its details
+  //!   Before running this test, make sure that this is not already created!!!
+  //!   This test doesn't have teardown
   it("Should redirect to user", async () => {
     //await driver.get("http://localhost:3000/registration");
     const button = (await findByDataTestSelenium("button", driver))[0]; //  Log me in

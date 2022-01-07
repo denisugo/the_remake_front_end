@@ -29,10 +29,18 @@ function Search({ list, callback }) {
         defaultValue="all"
         onChange={(event) => handleSelect(event.target.value)}
       >
-        <option value="all">All</option>
-        <option value="health">Health</option>
-        <option value="energy">Energy</option>
-        <option value="other">Other</option>
+        <option data-testid="all-option" value="all">
+          All
+        </option>
+        <option data-testid="health-option" value="health">
+          Health
+        </option>
+        <option data-testid="energy-option" value="energy">
+          Energy
+        </option>
+        <option data-testid="other-option" value="other">
+          Other
+        </option>
       </select>
       {/* TODO: Add select by category component*/}
       or

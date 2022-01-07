@@ -1,10 +1,11 @@
 import { useState } from "react";
+import jwt from "jsonwebtoken";
 
 import Meta from "../components/Head/Meta";
 import Header from "../components/Header/Header";
 import ProductList from "../components/ProductList/ProductList";
 import Search from "../components/Search/Search";
-import { endpoints, routes } from "../config/constants";
+import { endpoints, routes, jwtConfig } from "../config/constants";
 import Button from "../components/Button/Button";
 import NewProduct from "../components/NewProduct/NewProduct";
 
@@ -60,6 +61,20 @@ export const getServerSideProps = async (context) => {
   //     "Set-cookie",
   //     "connect.sid=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
   //   );
+
+  //? If here is a user
+  //? Here it is necessary to decode a user object, recieved from cookie
+  if (context.req.cookies.user) {
+    const user = jwt.verify(context.req.cookies.user, jwtConfig.key);
+    return {
+      props: {
+        list: jsonResponse,
+        user,
+      },
+    };
+  }
+
+  //? If a user is not in cookies, return a product list only
   return {
     props: {
       list: jsonResponse,

@@ -73,6 +73,7 @@ function Login({ isMobile }) {
             label="Username"
             required={true}
             pattern="([a-z]|[0-9]){2,8}"
+            data-testid="username-input"
           />
 
           <Input
@@ -86,6 +87,7 @@ function Login({ isMobile }) {
             label="Password"
             required={true}
             pattern="^.{4,}$"
+            data-testid="password-input"
           />
 
           <Button
@@ -106,7 +108,7 @@ function Login({ isMobile }) {
             label="Registration"
             fontSize={17}
             callback={() => router.push(routes.registration)}
-            data-testid="to-register"
+            data-testid="to-register-button"
           />
         </div>
       </div>

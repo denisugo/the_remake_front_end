@@ -113,7 +113,7 @@ describe("Login page", () => {
 
   describe("Redirect to registration", () => {
     it("Should redirect to registration page", () => {
-      const button = findByDataTest("to-register", wrapper);
+      const button = findByDataTest("to-register-button", wrapper);
       expect(button.length).toBe(1);
 
       button.dive().simulate("click");

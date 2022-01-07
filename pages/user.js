@@ -92,10 +92,16 @@ function User({ user }) {
     });
 
     //? If update was unsuccessfull, it should display an alert and return now
-    if (!fetched.ok)
+    if (!fetched.ok) {
+      //? If a message is supplied, display message
+      try {
+        const message = (await fetched.json()).message;
+        return alert(message);
+      } catch (error) {}
       return alert(
         "An error occured. This field cannot be updated. Please try again"
       );
+    }
 
     //? Then it should set new jwt
     //* Set token to cookies

@@ -8,12 +8,12 @@ import { selectUser } from "../../features/UserSlice/UserSlice";
 import style from "../../styles/Nav/Nav.module.css";
 import { CartIcon, HomeIcon, UserIcon } from "../Icons";
 
-function Nav() {
+function Nav({ user }) {
   // function Nav({ user }) {
   //const router = useRouter() || { pathname: {} }; // Alternative value for testing purposes
   //const pathname = router.pathname;
 
-  const user = useSelector(selectUser);
+  //const user = useSelector(selectUser);
 
   return (
     <div className={style.nav} data-testid="nav">
