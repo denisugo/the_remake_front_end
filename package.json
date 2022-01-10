@@ -7,7 +7,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest --watch ./__tests__/pages/ ./__tests__/components/ ./__tests__/getProps/ ./__tests__/features/",
-    "selenium": "jest ./__tests__/selenium/index.test.js"
+    "selenium": "jest ./__tests__/selenium/user.test.js"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.2",

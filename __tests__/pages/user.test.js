@@ -58,7 +58,7 @@ describe("User page", () => {
   describe("Logout", () => {
     it("Should redirect to login", async () => {
       wrapper = setUp(user);
-      const button = findByComponent("Button", wrapper).at(5);
+      const button = findByDataTest("logout", wrapper).at(0);
 
       //? Simulating button click
       button.dive().simulate("click");
@@ -83,7 +83,7 @@ describe("User page", () => {
       let editBox = findByDataTest("edit-box", wrapper);
       expect(editBox.length).toBe(1);
 
-      const cancel = findByComponent("Button", wrapper).at(1);
+      const cancel = findByDataTest("cancel", wrapper).at(0);
       //? Simulating button click
       cancel.dive().simulate("click");
 

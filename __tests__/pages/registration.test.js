@@ -1,6 +1,5 @@
-import * as reactRedux from "react-redux";
-import * as UserSlice from "../../features/UserSlice/UserSlice";
 import * as router from "next/router";
+import * as jwt from "jsonwebtoken";
 
 import registration from "../../pages/registration";
 import {
@@ -15,17 +14,13 @@ describe("Registration page", () => {
   let wrapper;
 
   beforeEach(() => {
-    //  Setup for react redux
-    dispatch = jest.fn();
+    //* Reset fetch mock
+    fetch.resetMocks();
 
-    reactRedux.useDispatch = jest.fn().mockReturnValue(dispatch);
-    reactRedux.useSelector = jest.fn().mockReturnValue(true);
+    //* jwt setup
+    jwt.default.sign = jest.fn();
 
-    UserSlice.selectUser = jest.fn();
-    UserSlice.selectUserError = jest.fn();
-    UserSlice.registerUser = jest.fn();
-
-    //  Next.js router setup
+    //*  Next.js router setup
     router.default.push = jest.fn();
 
     wrapper = setUp(registration);
@@ -47,42 +42,54 @@ describe("Registration page", () => {
   });
 
   describe("Registering", () => {
-    // Unable to test sumbitting after button clicking
+    //! Unable to test sumbitting after button clicking
     describe("All fields are filled out", () => {
-      it("Should register a new user", () => {
+      it("Should register a new user", async () => {
+        //? Mocking fetch
+        fetch.mockResolvedValueOnce({
+          ok: true,
+          json: () => {
+            return {};
+          },
+        });
+
+        //* Locate form component
         const form = findByComponent("form", wrapper);
         expect(form.length).toBe(1);
 
-        const firstNameField = findByComponent("Input", wrapper).first();
+        //* Locate all fields and fill them out
+        const firstNameField = findByDataTest("first-name", wrapper).at(0);
         firstNameField.dive().simulate("change", {
-          target: { name: "First-Name", value: "spam" },
+          target: { name: "First Name", value: "spam" },
         });
 
-        const lastNameField = findByComponent("Input", wrapper).at(1);
+        const lastNameField = findByDataTest("last-name", wrapper).at(0);
         lastNameField
           .dive()
-          .simulate("change", { target: { name: "Last-Name", value: "spam" } });
+          .simulate("change", { target: { name: "Last Name", value: "spam" } });
 
-        const emailField = findByComponent("Input", wrapper).at(2);
+        const emailField = findByDataTest("email", wrapper).at(0);
         emailField
           .dive()
           .simulate("change", { target: { name: "Email", value: "spam" } });
 
-        const usernameField = findByComponent("Input", wrapper).at(3);
+        const usernameField = findByDataTest("username", wrapper).at(0);
         usernameField.dive().simulate("change", {
           target: { name: "Username", value: "spam" },
         });
 
-        const passwordField = findByComponent("Input", wrapper).at(4);
+        const passwordField = findByDataTest("password", wrapper).at(0);
         passwordField
           .dive()
           .simulate("change", { target: { name: "Password", value: "spam" } });
 
+        //* Submit form
         form.simulate("submit", { preventDefault: jest.fn() });
 
-        expect(dispatch.mock.calls.length).toBe(1);
-        // expect(reactRedux.useDispatch.mock.calls.length).toBe(3); // Should be 3 because useState rerender the component
-        // expect(reactRedux.useSelector.mock.calls.length).toBe(6); // Should be 3 because useState rerender the component
+        //? This will execute async function in registration.js immidiately
+        await new Promise((res) => setImmediate(res));
+
+        expect(router.default.push.mock.calls.length).toBe(1);
       });
     });
   });

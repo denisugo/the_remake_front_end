@@ -1,6 +1,38 @@
-## Links
+# The remake (front-end)
 
-This is the client app. It should work with [this API](https://github.com/denisugo/back_end_portfolio)
+## Overview
+
+This is the remake of my previous portfolio project. It is aimed for improving all the cons of the project. The Sql database remains the same, back-end part should be slightly upgraded, front-end will also get more features.
+
+## Features
+
+- JWT instead of redux
+- Oauth
+- Description of each function
+- Simple back-end structure
+
+## Comment styling
+
+- // Should be used for commenting unused parts of code
+- //\* Should be used for short describing of code parts, generally for introductions
+- //? Should be used for more detailed describing of code
+- // TODO: Should be used for leaving certain tasks within code
+- //! Should be used for indicating of high priority notes
+
+## Roadmap
+
+### Front-end
+
+- Refactor and add a fully functional validation on inputs
+- Comment each component
+- JWT should expire
+
+### Back-end
+
+- Refactor all middlewares
+- Remove roles in SQL, so it can be published onto Heroku
+- Cookie session should expire
+- Get rid of query tests and refactor middleware tests
 
 ## Getting Started
 
@@ -8,7 +40,11 @@ This app was build with Next js framework, tested with Jest and Selenium.
 
 Docs could be found in _Docs_ folder.
 
-## Initial setup
+### Links
+
+This is the client app. It should work with [this API](https://github.com/denisugo/back_end_portfolio)
+
+### Initial setup
 
 To make it work, you should create _next.config.js_ at the root of this project and paste this:
 
@@ -28,6 +64,8 @@ To make it work, you should create _next.config.js_ at the root of this project 
 
 ![Preview](/docs/portfolio.gif)
 
+ <br />
+
 ## Pros
 
 - Lightwight
@@ -35,13 +73,17 @@ To make it work, you should create _next.config.js_ at the root of this project 
 - A11y friendly
 - Good color combination
 
-## Cons
+## Pros & Cons
 
-- Not all components are equally good: some were created earlier, that is why they can contain some mistakes, that were cought and replaced by a better solution in other components. For example `data-testid` can be duplicated.
+### Cons
 
 - Poor design: Because of time pressure, I was unable to create very elaborate elements, high fidelity wireframings and a mobile (tablet) version of the app. So that it is just a Next js showcase project.
 
-## TODO:
+### Pros
+
+- Anything else
+
+### TODO:
 
 - Improve design.
 - Catch mistakes in components.
@@ -49,5 +91,3 @@ To make it work, you should create _next.config.js_ at the root of this project 
 - Recreate all components that contains `form ` item. It is importtant for the following todo.
 - Improve tests. Some tests requirs _teardown_ phase. Not all component have 100% test coverage.
 - Add mobile version
-- Add admin flow
-- Refactor selenium test suits

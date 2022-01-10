@@ -6,6 +6,8 @@ const {
 
 const driver = new Builder().forBrowser("chrome").build();
 
+//!   Before running this test, make sure that this user is not already created!!!
+//!   This test doesn't have teardown
 describe("Selenium registration page", () => {
   beforeEach(async () => {
     await driver.get("http://localhost:3000/registration");
@@ -19,76 +21,82 @@ describe("Selenium registration page", () => {
   });
 
   it("Should open registration page", async () => {
-    //Page title
+    //*Page title
     const title = await driver.getTitle();
     expect(title).toBe("Registration page");
 
-    // Nav bar conten
+    //* Nav bar conten
     const svgs = await findByComponentSelenium("svg", driver); // Navigation icons
     expect(svgs.length).toBe(3);
     const logo = await findByDataTestSelenium("logo", driver);
     expect(logo.length).toBe(1);
-
-    // Main page content
-    const buttons = await findByDataTestSelenium("button", driver);
-    expect(buttons.length).toBe(1);
-    const inputs = await findByDataTestSelenium("input", driver);
-    expect(inputs.length).toBe(5);
-    const hints = await findByDataTestSelenium("hint", driver);
-    expect(hints.length).toBe(5);
   });
 
   it("Should redirect to user", async () => {
+    //* User details
     const username = "jafar";
     const password = "secret01";
     const email = "jafar@gmail.com";
     const firstName = "Abdul";
     const lastName = "Jafar";
 
-    const button = (await findByDataTestSelenium("button", driver))[0]; //  Log me in
-    const firstNameField = (await findByDataTestSelenium("input", driver))[0];
-    const lastNameField = (await findByDataTestSelenium("input", driver))[1];
-    const emailField = (await findByDataTestSelenium("input", driver))[2];
-    const usernameField = (await findByDataTestSelenium("input", driver))[3];
-    const passwordField = (await findByDataTestSelenium("input", driver))[4];
-
+    ///* Locate all fields and send them user details
+    const firstNameField = (
+      await findByDataTestSelenium("first-name", driver)
+    )[0];
     await firstNameField.sendKeys(firstName);
+    const lastNameField = (
+      await findByDataTestSelenium("last-name", driver)
+    )[0];
     await lastNameField.sendKeys(lastName);
+    const emailField = (await findByDataTestSelenium("email", driver))[0];
     await emailField.sendKeys(email);
+    const usernameField = (await findByDataTestSelenium("username", driver))[0];
     await usernameField.sendKeys(username);
+    const passwordField = (await findByDataTestSelenium("password", driver))[0];
     await passwordField.sendKeys(password);
 
-    const actions = driver.actions({ async: true });
-    await actions.move({ origin: button }).press().release().perform();
+    //* Locate register me button and click it
+    const button = (await findByDataTestSelenium("register", driver))[0];
+    button.click();
 
+    //* Wait for redirection
     await driver.wait(until.urlIs("http://localhost:3000/user"), 3000);
     const url = await driver.getCurrentUrl();
     expect(url).toBe(`http://localhost:3000/user`);
   });
 
   it("Should not redirect to user", async () => {
-    const username = "jb";
+    //* User details (wrong)
+    const username = "jarvis";
     const password = "secret";
-    const email = "error.com"; //error in email format
+    const email = "error.com"; //!error in email format
     const firstName = "Abdul";
     const lastName = "Jafar";
 
-    const button = (await findByDataTestSelenium("button", driver))[0]; //  Log me in
-    const firstNameField = (await findByDataTestSelenium("input", driver))[0];
-    const lastNameField = (await findByDataTestSelenium("input", driver))[1];
-    const emailField = (await findByDataTestSelenium("input", driver))[2];
-    const usernameField = (await findByDataTestSelenium("input", driver))[3];
-    const passwordField = (await findByDataTestSelenium("input", driver))[4];
-
+    ///* Locate all fields and send them user details
+    const firstNameField = (
+      await findByDataTestSelenium("first-name", driver)
+    )[0];
     await firstNameField.sendKeys(firstName);
+    const lastNameField = (
+      await findByDataTestSelenium("last-name", driver)
+    )[0];
     await lastNameField.sendKeys(lastName);
+    const emailField = (await findByDataTestSelenium("email", driver))[0];
     await emailField.sendKeys(email);
+    const usernameField = (await findByDataTestSelenium("username", driver))[0];
     await usernameField.sendKeys(username);
+    const passwordField = (await findByDataTestSelenium("password", driver))[0];
     await passwordField.sendKeys(password);
 
-    const actions = driver.actions({ async: true });
-    await actions.move({ origin: button }).press().release().perform();
+    //* Locate register me button and click it
+    const button = (await findByDataTestSelenium("register", driver))[0];
+    button.click();
 
+    //* Wait for redirection
+    //? Should not redirect, therefore we are using setTimeout to wait certain amount of time without
+    //? being interrupted by an error
     await new Promise((resolved) => setTimeout(resolved, 3000));
     const url = await driver.getCurrentUrl();
     expect(url).toBe(`http://localhost:3000/registration`);

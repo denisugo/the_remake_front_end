@@ -240,6 +240,7 @@ function User({ user }) {
             label="Logout"
             fontSize={17}
             callback={logoutHandler}
+            data-testid="logout"
           />
         </>
       )}
@@ -278,6 +279,7 @@ function User({ user }) {
                 label="Accept"
                 fontSize={17}
                 callback={() => {}}
+                data-testid="accept"
               />
               <Button
                 text="Cancel"
@@ -286,6 +288,7 @@ function User({ user }) {
                 label="Cancel"
                 fontSize={17}
                 callback={cancelButtonHandler}
+                data-testid="cancel"
               />
             </div>
           </form>

@@ -7,6 +7,7 @@ const {
 const driver = new Builder().forBrowser("chrome").build();
 
 describe("Selenium User page", () => {
+  //* User details
   const username = "jafar";
   const password = "secret01";
   const email = "jafar@gmail.com";
@@ -27,59 +28,62 @@ describe("Selenium User page", () => {
 
   //!   This test was copied from registration page test suit.
   //!   It will create a user for futher updating its details
-  //!   Before running this test, make sure that this is not already created!!!
+  //!   Before running this test, make sure that this user is not already created!!!
   //!   This test doesn't have teardown
   it("Should redirect to user", async () => {
-    //await driver.get("http://localhost:3000/registration");
-    const button = (await findByDataTestSelenium("button", driver))[0]; //  Log me in
-    const firstNameField = (await findByDataTestSelenium("input", driver))[0];
-    const lastNameField = (await findByDataTestSelenium("input", driver))[1];
-    const emailField = (await findByDataTestSelenium("input", driver))[2];
-    const usernameField = (await findByDataTestSelenium("input", driver))[3];
-    const passwordField = (await findByDataTestSelenium("input", driver))[4];
-
+    ///* Locate all fields and send them user details
+    const firstNameField = (
+      await findByDataTestSelenium("first-name", driver)
+    )[0];
     await firstNameField.sendKeys(firstName);
+    const lastNameField = (
+      await findByDataTestSelenium("last-name", driver)
+    )[0];
     await lastNameField.sendKeys(lastName);
+    const emailField = (await findByDataTestSelenium("email", driver))[0];
     await emailField.sendKeys(email);
+    const usernameField = (await findByDataTestSelenium("username", driver))[0];
     await usernameField.sendKeys(username);
+    const passwordField = (await findByDataTestSelenium("password", driver))[0];
     await passwordField.sendKeys(password);
 
-    const actions = driver.actions({ async: true });
-    await actions.move({ origin: button }).press().release().perform();
+    //* Locate register me button and click it
+    const button = (await findByDataTestSelenium("register", driver))[0];
+    button.click();
 
+    //* Wait for redirection
     await driver.wait(until.urlIs("http://localhost:3000/user"), 3000);
     const url = await driver.getCurrentUrl();
     expect(url).toBe(`http://localhost:3000/user`);
   });
 
   it("Should open user page", async () => {
-    //Page title
+    //*Page title
     const title = await driver.getTitle();
     expect(title).toBe("User page");
 
-    // Nav bar conten
+    //* Nav bar conten
     const svgs = await findByComponentSelenium("svg", driver); // Navigation icons
     expect(svgs.length).toBe(3);
     const logo = await findByDataTestSelenium("logo", driver);
     expect(logo.length).toBe(1);
-
-    // Main page content
-    const buttons = await findByDataTestSelenium("button", driver);
-    expect(buttons.length).toBe(6);
   });
 
   it("Should update first name", async () => {
+    //* Locate first name and check its value
     let firstNameValue = (
       await findByDataTestSelenium("first-name", driver)
     )[0];
     firstNameValue = await firstNameValue.getText();
     expect(firstNameValue).toBe(firstName);
 
-    const button = (await findByDataTestSelenium("button", driver))[0]; //  first name edit button
+    //* Locate first name edit button and click it
+    const button = (
+      await findByDataTestSelenium("first-name-button", driver)
+    )[0];
+    button.click();
 
-    let actions = driver.actions({ async: true });
-    await actions.move({ origin: button }).press().release().perform();
-
+    //* Wait until edit box appears
     let editBox;
     await driver.wait(async () => {
       editBox = await findByDataTestSelenium("edit-box", driver);
@@ -88,53 +92,65 @@ describe("Selenium User page", () => {
     expect(editBox.length).toBe(1);
     editBox = editBox[0];
 
+    //* Locate input for changing the first name
     const inputs = await findByDataTestSelenium("input", driver);
     expect(inputs.length).toBe(1);
     const newFirstNameInput = inputs[0];
 
+    //* Send new first name to the input
     await newFirstNameInput.sendKeys(newFirstName);
 
-    const editBoxButtons = await findByDataTestSelenium("button", driver);
-    expect(editBoxButtons.length).toBe(2);
-    const acceptButton = editBoxButtons[0];
+    //* Locate accept button and click it
+    const acceptButton = (await findByDataTestSelenium("accept", driver))[0];
+    acceptButton.click();
 
-    actions = driver.actions({ async: true });
-    await actions.move({ origin: acceptButton }).press().release().perform();
-
+    //* Wait until editbox disappears
     await driver.wait(async () => {
       editBox = await findByDataTestSelenium("edit-box", driver);
       return editBox[0] ? false : true;
     }, 3000);
 
+    //* Check if the first name is updated
     firstNameValue = (await findByDataTestSelenium("first-name", driver))[0];
     firstNameValue = await firstNameValue.getText();
     expect(firstNameValue).toBe(newFirstName);
   });
 
+  it("Should fetch a user if cookie is provided", async () => {
+    //* Attempt to open user page
+    await driver.get("http://localhost:3000/user");
+
+    //* Wait for redirection
+    //? Should not redirect, therefore we are using setTimeout to wait certain amount of time without
+    //? being interrupted by an error
+    await new Promise((resolved) => setTimeout(resolved, 3000));
+
+    //* Get current url
+    const url = await driver.getCurrentUrl();
+    expect(url).toBe(`http://localhost:3000/user`);
+  });
+
   it("Should logout a user", async () => {
-    const button = (await findByDataTestSelenium("button", driver))[5]; //  Log me out
+    //* Locate logout button and click it
+    const button = (await findByDataTestSelenium("logout", driver))[0];
+    button.click();
 
-    const actions = driver.actions({ async: true });
-    await actions.move({ origin: button }).press().release().perform();
-
+    //* Wait for redirection
     await driver.wait(until.urlIs("http://localhost:3000/login"), 3000);
+    //* Get current url
     const url = await driver.getCurrentUrl();
     expect(url).toBe(`http://localhost:3000/login`);
 
+    //* Check cookies
     const cookie = await driver.manage().getCookies();
     expect(cookie).toStrictEqual([]);
   });
 
   it("Should redirect to login page when no user provided", async () => {
+    //* Attempt to open user page
     await driver.get("http://localhost:3000/user");
+
+    //* Wait for redirection to login page
     await driver.wait(until.urlIs("http://localhost:3000/login"), 3000);
-    const url = await driver.getCurrentUrl();
-    expect(url).toBe(`http://localhost:3000/login`);
-  });
-  it("Should fetch a user if cookie is provided", async () => {
-    await driver.get("http://localhost:3000/user");
-    await driver.wait(until.urlIs("http://localhost:3000/login"), 3000);
-    const url = await driver.getCurrentUrl();
-    expect(url).toBe(`http://localhost:3000/login`);
   });
 });
