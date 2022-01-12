@@ -119,7 +119,7 @@ function Login({ isMobile }) {
 export default Login;
 
 export const getServerSideProps = async (context) => {
-  //? Check if user cookie is set
+  //? Check if connect.sid cookie is set
   //? If so, try to retrieve a user
   if (!context.req.cookies["connect.sid"])
     return {

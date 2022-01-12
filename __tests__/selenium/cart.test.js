@@ -7,13 +7,15 @@ const {
 
 const driver = new Builder().forBrowser("chrome").build();
 
+//! Adding and deleting items from cart were tested in product page selenium test suit
+
 describe("Selenium Cart page", () => {
   const nonAdminUsername = "davy000";
   const nonAdminPassword = "treasure";
   const adminUsername = "jb";
   const adminPassword = "secret";
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await driver.get("http://localhost:3000/cart");
   });
 
@@ -26,74 +28,81 @@ describe("Selenium Cart page", () => {
 
   describe("User flow", () => {
     it("Should be redirected to login page when no valid cookie provided", async () => {
-      //Page title
+      //* Wait for redirection
+      await driver.wait(until.urlIs("http://localhost:3000/login"), 3000);
+
+      //* Page title
       const title = await driver.getTitle();
       expect(title).toBe("Login page");
     });
 
-    //   It will create a user for futher updating its details
     it("Should redirect to user", async () => {
-      const button = (await findByDataTestSelenium("button", driver))[0]; //  Log me in
-      const usernameField = (await findByDataTestSelenium("input", driver))[0];
-      const passwordField = (await findByDataTestSelenium("input", driver))[1];
+      //* Wait for redirection
+      await driver.wait(until.urlIs("http://localhost:3000/login"), 3000);
+
+      //* Standard login process from login page test
+      //* Locate inputs and insert credentials
+      const usernameField = (
+        await findByDataTestSelenium("username-input", driver)
+      )[0];
+      const passwordField = (
+        await findByDataTestSelenium("password-input", driver)
+      )[0];
 
       await usernameField.sendKeys(nonAdminUsername);
       await passwordField.sendKeys(nonAdminPassword);
 
-      const actions = driver.actions({ async: true });
-      await actions.move({ origin: button }).press().release().perform();
+      //* Locate login button and click on it
+      const button = (await findByDataTestSelenium("login-button", driver))[0];
+      button.click();
 
+      //* Wait for redirection
       await driver.wait(until.urlIs("http://localhost:3000/user"), 3000);
       const url = await driver.getCurrentUrl();
       expect(url).toBe(`http://localhost:3000/user`);
 
-      // Navigate to cart page
+      //* Navigate back to cart page
+      //* Locate correct link and click it
       const navigation = (
         await findByDataTestSelenium("navigation", driver)
       )[0];
-      const link = (await findByComponentSelenium("a", navigation))[1]; // cart link
+      const link = (await findByComponentSelenium("a", navigation))[1]; //? cart link
       link.click();
       await driver.wait(until.urlIs("http://localhost:3000/cart"), 3000);
     });
 
     it("Should open cart page", async () => {
-      //Page title
+      //* Page title
       const title = await driver.getTitle();
       expect(title).toBe("Cart");
 
-      // Nav bar conten
-      const svgs = await findByComponentSelenium("svg", driver); // Navigation icons
+      //* Nav bar conten
+      const svgs = await findByComponentSelenium("svg", driver); //? Navigation icons
       expect(svgs.length).toBe(3);
       const logo = await findByDataTestSelenium("logo", driver);
       expect(logo.length).toBe(1);
     });
 
     it("Should redirect to checkout", async () => {
-      const buttons = await findByDataTestSelenium("button", driver);
-      buttons[buttons.length - 2].click(); // -2 is for checkout link button
-
-      await driver.wait(until.urlIs("http://localhost:3000/checkout"), 3000);
-      const url = await driver.getCurrentUrl();
-      expect(url).toBe(`http://localhost:3000/checkout`);
-
-      // Navigate back to cart page
-      const navigation = (
-        await findByDataTestSelenium("navigation", driver)
+      //* Locate chekout button and click it
+      const checkoutButtons = (
+        await findByDataTestSelenium("checkout-button", driver)
       )[0];
-      const link = (await findByComponentSelenium("a", navigation))[1]; // cart link
-      link.click();
-      await driver.wait(until.urlIs("http://localhost:3000/cart"), 3000);
+      checkoutButtons.click();
+
+      //* Wait for redirection
+      await driver.wait(until.urlIs("http://localhost:3000/checkout"), 3000);
     });
 
     it("Should redirect to orders page", async () => {
-      const buttons = await findByDataTestSelenium("button", driver);
-      buttons[buttons.length - 1].click(); // -1 is for orders link button
+      //* Locate orders button and click it
+      const ordersButtons = (
+        await findByDataTestSelenium("view-orders-button", driver)
+      )[0];
+      ordersButtons.click();
 
+      //* Wait for redirection
       await driver.wait(until.urlIs("http://localhost:3000/orders"), 3000);
-      const url = await driver.getCurrentUrl();
-      expect(url).toBe(`http://localhost:3000/orders`);
     });
   });
-
-  // Deletion of items is tested within product page test suit
 });

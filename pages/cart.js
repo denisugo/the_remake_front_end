@@ -3,35 +3,31 @@ import { getUser, selectUser } from "../features/UserSlice/UserSlice";
 import router from "next/router";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import jwt from "jsonwebtoken";
+import Cookies from "universal-cookie";
 
 import Input from "../components/Input/Input";
 import Button from "../components/Button/Button";
 import Meta from "../components/Head/Meta";
-import { endpoints, routes } from "../config/constants";
+import { endpoints, jwtConfig, routes } from "../config/constants";
 import style from "../styles/Cart/Cart.module.css";
 
-function Cart(props) {
-  const user = useSelector(selectUser);
-  const [items, setItems] = useState([]);
-
-  // Useeffect is used because of ssr
-  React.useEffect(() => {
-    if (!user) router.push(routes.login);
-    else
-      (async () => {
-        const url = `${process.env.HOST}${endpoints.cart(user.id)}`;
-        const items = await fetch(url, { credentials: "include" });
-        if (items.ok) return setItems(await items.json());
-      })();
-  }, [user]);
-
-  if (!user) return <div>No user found</div>;
+function Cart({ user, cartItems }) {
+  //* Items setup
+  const [items, setItems] = useState(cartItems);
 
   let total = 0;
 
+  //* Handle removing item from cart
   const handleRemove = async (product_id) => {
+    //* Generate body
     const body = { product_id };
+
+    //* Generate url
     const url = `${process.env.HOST}${endpoints.cart(user.id)}`;
+
+    //* Make a request
+    //? Body should be converted to 'application/json'
     const fetched = await fetch(url, {
       method: "DELETE",
       credentials: "include",
@@ -39,8 +35,9 @@ function Cart(props) {
       headers: { "Content-Type": "application/json" },
     });
 
+    //* Set upd updated array to items
     if (fetched.ok)
-      return setItems(items.filter((item) => item.id !== product_id));
+      return setItems(items.filter((item) => item.product_id !== product_id));
   };
 
   return (
@@ -76,7 +73,8 @@ function Cart(props) {
                   text="X"
                   label="Cancel"
                   fontSize={17}
-                  callback={() => handleRemove(item.id)}
+                  callback={() => handleRemove(item.product_id)}
+                  data-testid="cancel-button"
                 />
               </div>
             );
@@ -96,6 +94,7 @@ function Cart(props) {
           height={50}
           width={200}
           callback={() => router.push(routes.checkout)}
+          data-testid="checkout-button"
         />
 
         <Button
@@ -106,6 +105,7 @@ function Cart(props) {
           height={50}
           width={200}
           callback={() => router.push(routes.orders)}
+          data-testid="view-orders-button"
         />
       </div>
     </>
@@ -113,3 +113,40 @@ function Cart(props) {
 }
 
 export default Cart;
+
+export const getServerSideProps = async (context) => {
+  //* Check if user cookie is set
+  //? If not, redirect to login page to attempt to sign in
+  if (!context.req.cookies.user)
+    return {
+      redirect: {
+        destination: routes.login,
+        permanent: false,
+      },
+    };
+
+  //? Here it is necessary to decode a user object, recieved from cookie
+  const user = jwt.verify(context.req.cookies.user, jwtConfig.key);
+
+  //* Fetch cart items
+  let cartItems = [];
+  //* Generate url
+  const url = `${process.env.HOST}${endpoints.cart()}`;
+  const fetchedItems = await fetch(url, {
+    credentials: "include",
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Cookie: `connect.sid=${context.req.cookies["connect.sid"]}`,
+    },
+  });
+  //? If fetched successfully, retrieve cart items array
+  if (fetchedItems.ok) cartItems = await fetchedItems.json();
+
+  return {
+    props: {
+      user,
+      cartItems,
+    },
+  };
+};

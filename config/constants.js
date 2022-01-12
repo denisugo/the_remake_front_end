@@ -15,9 +15,9 @@ export const endpoints = {
   logout: () => `/users/logout`,
   user: () => `/users`,
   register: () => "/register",
-  orders: (userId) => `/users/${userId}/orders`,
-  cart: (userId) => `/users/${userId}/cart`,
-  checkout: (userId) => `/users/${userId}/cart/checkout`,
+  orders: () => `/users/orders`,
+  cart: () => `/users/cart`,
+  checkout: () => `/users/cart/checkout`,
 };
 
 export const jwtConfig = {

@@ -18,14 +18,20 @@ describe("Product page", () => {
     // reactRedux.useSelector = jest.fn().mockReturnValue(false);
     // UserSlice.selectUser = jest.fn();
 
-    // Vars setup
+    //* Global setup
     global.window = {};
     global.window.open = jest.fn();
+
+    //* Mock alert
+    global.alert = jest.fn();
+
+    //* Reset fetch mock
+    fetch.resetMocks();
 
     //  Next.js router setup
     //router.default.push = jest.fn();
 
-    // Props setup
+    //* Props setup
     props = {
       id: 9,
       name: "product",
@@ -52,12 +58,17 @@ describe("Product page", () => {
       const price = findByDataTest("price", wrapper);
       expect(price.length).toBe(1);
 
-      const youShouldLogin = findByDataTest("you-should-login", wrapper);
-      expect(youShouldLogin.length).toBe(1);
+      //? User is null
+      const youShouldLoginButton = findByDataTest(
+        "you-should-login-button",
+        wrapper
+      );
+      expect(youShouldLoginButton.length).toBe(1);
     });
     it("Should render quantity and add", () => {
-      //   reactRedux.useSelector = jest.fn().mockReturnValue(true);
-      //   UserSlice.selectUser = jest.fn();
+      //* Set user object
+      //? Now it should not render 'you should login' button
+      //? It should render 'add to cart' button and 'quantity' input
       props.user = { id: 1 };
       wrapper = setUp(product, props);
 
@@ -70,45 +81,60 @@ describe("Product page", () => {
   });
   describe("Redirecting", () => {
     it("Should redirect to login page", () => {
-      const youShouldLogin = findByDataTest("you-should-login", wrapper);
-      const button = findByComponent("Button", youShouldLogin);
-      button.first().dive().simulate("click");
+      //* Locate the button
+      const youShouldLoginButton = findByDataTest(
+        "you-should-login-button",
+        wrapper
+      );
+
+      youShouldLoginButton.first().dive().simulate("click");
       expect(window.open.mock.calls.length).toBe(1);
-      //expect(router.default.push.mock.calls.length).toBe(1);
     });
   });
 
   describe("Adding items to a cart", () => {
     beforeEach(() => {
+      //* Set user object
+      //? Now it should not render 'you should login' button
+      //? It should render 'add to cart' button and 'quantity' input
       props.user = { id: 1 };
       wrapper = setUp(product, props);
     });
     it("Should add item to a cart", () => {
-      const add = findByComponent("Button", wrapper);
-
+      //* Locate the button and click it
+      const add = findByDataTest("add-to-cart-button", wrapper);
       add.first().dive().simulate("click");
+
       expect(fetch.mock.calls.length).toBe(1);
     });
 
     it("Should change a quantity of a product", () => {
-      let quantity = findByComponent("Input", wrapper);
+      //* locate quantity input and insert a new value
+      let quantity = findByDataTest("quantity-input", wrapper);
       quantity
         .first()
         .dive()
         .simulate("change", { target: { value: 2 } });
 
+      //* Update wrapper
       wrapper.update();
+
+      //* locate quantity input after the wrapper update
       quantity = findByComponent("Input", wrapper);
       expect(quantity.prop("value")).toBe(2);
     });
     it("Should NOT change a quantity of a product", () => {
-      let quantity = findByComponent("Input", wrapper);
+      //* locate quantity input and insert a new value
+      let quantity = findByDataTest("quantity-input", wrapper);
       quantity
         .first()
         .dive()
         .simulate("change", { target: { value: "r" } });
 
+      //* Update wrapper
       wrapper.update();
+
+      //* locate quantity input after the wrapper update
       quantity = findByComponent("Input", wrapper);
       expect(quantity.prop("value")).toBe(1);
     });

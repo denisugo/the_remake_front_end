@@ -20,25 +20,19 @@ describe("Cart page", () => {
 
   describe("Rendering", () => {
     beforeEach(() => {
-      //  Redux router setup
-      reactRedux.useSelector = jest.fn().mockReturnValue(true);
-      UserSlice.selectUser = jest.fn();
-
-      //  Next.js router setup
+      //*  Next.js router setup
       router.default.push = jest.fn();
 
-      // mocking fetch
-      fetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => [
+      //* Props setup
+      const props = {
+        cartItems: [
           { quantity: 2, price: 100 },
           { quantity: 1, price: 50 },
           { quantity: 4, price: 25 },
-        ], // =350
-      });
-
-      jest.spyOn(React, "useEffect").mockImplementationOnce((f) => f());
-      wrapper = setUp(cart);
+        ],
+        user: {},
+      };
+      wrapper = setUp(cart, props);
     });
 
     it("Should render cart page", () => {
@@ -59,68 +53,35 @@ describe("Cart page", () => {
       expect(total.text()).toBe("TOTAL: $350");
 
       const buttons = findByComponent("Button", wrapper);
-      expect(buttons.length).toBe(3 + 1 + 1); // One button for redirecting to orders, one for checkout
+      expect(buttons.length).toBe(3 + 1 + 1); //? One button for redirecting to orders, one for checkout
     });
   });
   describe("Redirecting", () => {
-    it("Should redirect to login page", () => {
-      //  Redux router setup
-      reactRedux.useSelector = jest.fn().mockReturnValue(false);
-      UserSlice.selectUser = jest.fn();
-
-      //  Next.js router setup
+    beforeEach(() => {
+      //*  Next.js router setup
       router.default.push = jest.fn();
 
-      // mocking fetch
-      fetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => [{}, {}, {}],
-      });
-
-      jest.spyOn(React, "useEffect").mockImplementationOnce((f) => f());
-
-      wrapper = setUp(cart);
-
-      expect(router.default.push.mock.calls.length).toBe(1);
+      //* Props setup
+      const props = {
+        cartItems: [
+          { quantity: 2, price: 100 },
+          { quantity: 1, price: 50 },
+          { quantity: 4, price: 25 },
+        ],
+        user: {},
+      };
+      wrapper = setUp(cart, props);
     });
 
     it("Should redirect to order page", () => {
-      //  Redux router setup
-      reactRedux.useSelector = jest.fn().mockReturnValue(true);
-      UserSlice.selectUser = jest.fn();
-
-      //  Next.js router setup
-      router.default.push = jest.fn();
-
-      wrapper = setUp(cart);
-
-      // mocking fetch
-      fetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => [], // no other buttons are on the page
-      });
-
-      const orderLinkButton = findByComponent("Button", wrapper);
-      orderLinkButton.at(1).dive().simulate("click");
+      //* Locate the 'view my orders' button and click it
+      const orderButton = findByDataTest("view-orders-button", wrapper);
+      orderButton.at(0).dive().simulate("click");
       expect(router.default.push.mock.calls.length).toBe(1);
     });
     it("Should redirect to checkout page", () => {
-      //  Redux router setup
-      reactRedux.useSelector = jest.fn().mockReturnValue(true);
-      UserSlice.selectUser = jest.fn();
-
-      //  Next.js router setup
-      router.default.push = jest.fn();
-
-      wrapper = setUp(cart);
-
-      // mocking fetch
-      fetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => [], // no other buttons are on the page
-      });
-
-      const checkoutLinkButton = findByComponent("Button", wrapper);
+      //* Locate the 'Checkout your cart' button and click it
+      const checkoutLinkButton = findByDataTest("checkout-button", wrapper);
       checkoutLinkButton.at(0).dive().simulate("click");
       expect(router.default.push.mock.calls.length).toBe(1);
     });
@@ -128,61 +89,55 @@ describe("Cart page", () => {
 
   describe("Removing", () => {
     beforeEach(() => {
-      //  Redux router setup
-      reactRedux.useSelector = jest.fn().mockReturnValue(true);
-      UserSlice.selectUser = jest.fn();
-
-      //  Next.js router setup
-      router.default.push = jest.fn();
-
-      // mocking fetch
-      fetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => [
-          { id: 1, quantity: 2, price: 100 },
-          { id: 2, quantity: 1, price: 50 },
-          { id: 3, quantity: 4, price: 25 },
-        ], // =350
-      });
-
-      jest.spyOn(React, "useEffect").mockImplementationOnce((f) => f());
-      wrapper = setUp(cart);
+      //* Props setup
+      const props = {
+        cartItems: [
+          { quantity: 2, price: 100, product_id: 1 },
+          { quantity: 1, price: 50, product_id: 2 },
+          { quantity: 4, price: 25, product_id: 3 },
+        ],
+        user: {},
+      };
+      wrapper = setUp(cart, props);
     });
 
     it("Should remove item from cart", async () => {
-      // mocking fetch
+      //* Mock fetch
       fetch.mockResolvedValueOnce({
         ok: true,
       });
 
-      const removeButton = findByComponent("Button", wrapper).first();
-      removeButton.dive().simulate("click");
+      //* Locate cancel button and click it
+      const cancelButton = findByDataTest("cancel-button", wrapper);
+      cancelButton.first().dive().simulate("click");
 
-      // Await for async handleRemove
+      //? This will execute async function in cart.js immidiately
       await new Promise((res) => setImmediate(res));
 
+      //* Update wrapper
       wrapper.update();
 
-      // There should be two items with id=2 and id=3
+      //? There should be two items with id=2 and id=3
       const preview = findByDataTest("preview", wrapper);
       expect(preview.length).toBe(2);
     });
 
     it("Should NOT remove item from cart", async () => {
-      // mocking fetch
+      //* Mock fetch
       fetch.mockResolvedValueOnce({
         ok: false,
       });
 
-      const removeButton = findByComponent("Button", wrapper).first();
-      removeButton.dive().simulate("click");
+      //* Locate cancel button and click it
+      const cancelButton = findByDataTest("cancel-button", wrapper);
+      cancelButton.first().dive().simulate("click");
 
-      // Await for async handleRemove
+      //? This will execute async function in cart.js immidiately
       await new Promise((res) => setImmediate(res));
 
+      //* Update wrapper
       wrapper.update();
 
-      // There should be two items with id=2 and id=3
       const preview = findByDataTest("preview", wrapper);
       expect(preview.length).toBe(3);
     });

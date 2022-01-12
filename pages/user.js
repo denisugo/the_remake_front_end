@@ -12,12 +12,6 @@ import { endpoints, jwtConfig, routes } from "../config/constants";
 import style from "../styles/User/User.module.css";
 
 function User({ user }) {
-  // const username = user ? user.username : undefined;
-  // const password = "*******";
-  // const email = user ? user.email : undefined;
-  // const firstName = user ? user.first_name : undefined;
-  // const lastName = user ? user.last_name : undefined;
-
   //* State setup
   //* User fields setup
   const [username, setUsername] = useState(user ? user.username : undefined);

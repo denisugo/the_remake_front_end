@@ -1,5 +1,3 @@
-import { useSelector } from "react-redux";
-import { getUser, selectUser } from "../features/UserSlice/UserSlice";
 import router from "next/router";
 import Image from "next/image";
 
@@ -7,37 +5,41 @@ import Input from "../components/Input/Input";
 import Button from "../components/Button/Button";
 import Meta from "../components/Head/Meta";
 import style from "../styles/ProductPage/ProductPage.module.css";
-import { endpoints, routes } from "../config/constants";
-import { wrapper } from "../app/store";
+import { endpoints, jwtConfig, routes } from "../config/constants";
 import { useState } from "react";
+import jwt from "jsonwebtoken";
 
 function Product({ id, name, description, price, preview, user }) {
-  //const user = useSelector(selectUser);
-
-  // State setup
+  //* State setup
   const [quantity, setQuantity] = useState(1);
 
+  //* Change value of quantity
   const handleChange = (val) => {
     val = parseInt(val);
     if (val >= 1) return setQuantity(val);
     setQuantity(1);
   };
 
+  //* Open a new tab with login page
+  //? When user is signed in, correct cookies are set, so reloading the product page will fetch these cookies
+  //? That is why it should have '_blank' parameter
   const handleYouShouldLogin = async () => {
-    //await router.push(routes.login);
-    // await router.push({ pathname: routes.login, query: { target: "_blank" } });
     global.window.open(routes.login, "_blank");
   };
 
   const handleAdd = async () => {
-    const endpoint = endpoints.cart(user.id);
-    const url = `${process.env.HOST}${endpoint}`;
+    //* Generate url
+    const url = `${process.env.HOST}${endpoints.cart()}`;
+
+    //* Generate body
     const body = {
       product_id: id,
       quantity,
     };
 
-    await fetch(url, {
+    //* Set up a request
+    //? Body should be converted to type 'application/json'
+    const response = await fetch(url, {
       method: "POST",
       credentials: "include",
       body: JSON.stringify(body),
@@ -46,6 +48,11 @@ function Product({ id, name, description, price, preview, user }) {
         Accept: "application/json",
       },
     });
+    if (response.ok) {
+      alert("Item was added to cart");
+    } else {
+      alert("Error happened, please try again");
+    }
   };
 
   return (
@@ -69,7 +76,6 @@ function Product({ id, name, description, price, preview, user }) {
           {description}
         </p>
 
-        {/* <div data-testid="add-to-cart"> */}
         <p className={style.price} data-testid="price">
           ${price}
         </p>
@@ -82,6 +88,7 @@ function Product({ id, name, description, price, preview, user }) {
               label="Quantity"
               value={quantity}
               callback={handleChange}
+              data-testid="quantity-input"
             />
             <Button
               className={style.add}
@@ -89,6 +96,7 @@ function Product({ id, name, description, price, preview, user }) {
               width={150}
               label="Add to cart"
               callback={handleAdd}
+              data-testid="add-to-cart-button"
             />
           </>
         )}
@@ -102,10 +110,10 @@ function Product({ id, name, description, price, preview, user }) {
               text="You should login first to add the item to your cart"
               label="Login"
               callback={handleYouShouldLogin}
+              data-testid="you-should-login-button"
             />
           </div>
         )}
-        {/* </div> */}
       </div>
     </>
   );
@@ -113,33 +121,23 @@ function Product({ id, name, description, price, preview, user }) {
 
 export default Product;
 
-// export const getServerSideProps = async (context) => {
-//   const query = context.query;
-//   //console.log(query);
-
-//   if (query.id) return { props: {  ...query } };
-//   return {
-//     redirect: {
-//       destination: routes.login,
-//       permanent: false,
-//     },
-//   };
-// };
-
-export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
-    const query = context.query;
-    if (query.id) {
-      await store.dispatch(
-        getUser(`connect.sid=${context.req.cookies["connect.sid"]}`)
-      );
-      const user = selectUser(store.getState());
-      // It is possible that the cookie token is not valid beause of its age, then it should be deleted
-      if (!user)
-        context.res.setHeader(
-          "Set-cookie",
-          "connect.sid=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
-        );
+export const getServerSideProps = async (context) => {
+  //? Should only proceed if all details were supplied
+  const query = context.query;
+  if (query) {
+    if (
+      query.id &&
+      query.name &&
+      query.description &&
+      query.price &&
+      query.preview
+    ) {
+      //? Check if user cookie is set
+      //? If not, set user to null
+      let user = null;
+      if (context.req.cookies.user)
+        //? Here it is necessary to decode a user object, recieved from cookie
+        user = jwt.verify(context.req.cookies.user, jwtConfig.key);
 
       return {
         props: {
@@ -148,12 +146,14 @@ export const getServerSideProps = wrapper.getServerSideProps(
         },
       };
     }
-
-    return {
-      redirect: {
-        destination: routes.home,
-        permanent: false,
-      },
-    };
   }
-);
+
+  //* Redirect to main page
+  //? If query string is not provide or incorrect it should redirect to main page
+  return {
+    redirect: {
+      destination: routes.home,
+      permanent: false,
+    },
+  };
+};
