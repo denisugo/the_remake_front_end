@@ -72,7 +72,7 @@ function User({ user }) {
     )}&${"value"}=${encodeURIComponent(fieldValue)}`;
 
     //? Generating url
-    const url = `${process.env.HOST}${endpoints.user()}`;
+    const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.user()}`;
 
     //? Should POST data to the server
     const fetched = await fetch(url, {
@@ -129,7 +129,7 @@ function User({ user }) {
 
   const logoutHandler = async () => {
     //* Generate url
-    const url = `${process.env.HOST}${endpoints.logout()}`;
+    const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.logout()}`;
 
     //* Send a logout request
     //? It will also reset connect.id cookie

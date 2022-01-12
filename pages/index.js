@@ -36,7 +36,9 @@ export const getServerSideProps = async (context) => {
   // const cookie = `connect.sid=${connectSidCookie}`;
   //? Setting up the product endpoint
   const endpoint = endpoints.products();
-  const url = `${process.env.HOST}${endpoint}`;
+  const url = `${process.env.NEXT_PUBLIC_HOST}${endpoint}`;
+
+  console.log(url);
 
   //? Fetching the product list
   const response = await fetch(url, {

@@ -29,7 +29,7 @@ function Product({ id, name, description, price, preview, user }) {
 
   const handleAdd = async () => {
     //* Generate url
-    const url = `${process.env.HOST}${endpoints.cart()}`;
+    const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.cart()}`;
 
     //* Generate body
     const body = {

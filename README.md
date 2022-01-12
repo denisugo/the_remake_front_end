@@ -46,18 +46,13 @@ This is the client app. It should work with [this API](https://github.com/denisu
 
 ### Initial setup
 
-To make it work, you should create _next.config.js_ at the root of this project and paste this:
+To make it work, you should setup the environment variables that are provided in the following lines:
 
 ```
- module.exports = {
-     reactStrictMode: true,
-     images: { domains: ["images.unsplash.com"], },
-     env: {
-         HOST: "http://localhost:4000/api/v1",
-         THIS: "http://localhost:3000",
-         STRIPE_PK: "Your_Stripe_PK_Key",
-         },
-    };
+NEXT_PUBLIC_HOST= http://localhost:4000/api/v1
+NEXT_PUBLIC_THIS= http://localhost:3000
+SNEXT_PUBLIC_TRIPE_PK= our_Stripe_PK_Key
+
 ```
 
 ## Preview

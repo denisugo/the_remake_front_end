@@ -9,7 +9,7 @@ import Meta from "../components/Head/Meta";
 import { endpoints, routes } from "../config/constants";
 import { selectUser } from "../features/UserSlice/UserSlice";
 
-const stripePromise = loadStripe(process.env.STRIPE_PK);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PK);
 
 //TODO: check if user
 

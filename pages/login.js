@@ -20,7 +20,7 @@ function Login(props) {
     event.preventDefault();
 
     //* Retrieving a user
-    const url = `${process.env.HOST}${endpoints.login()}`;
+    const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.login()}`;
 
     //? Body should be ecoded as x-www-form-urlencoded
     const body = `${"username"}=${encodeURIComponent(
@@ -127,7 +127,7 @@ export const getServerSideProps = async (context) => {
     };
 
   //* Retrieving a user
-  const url = `${process.env.HOST}${endpoints.user()}`;
+  const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.user()}`;
 
   const fetchedUser = await fetch(url, {
     method: "GET",
