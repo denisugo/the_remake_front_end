@@ -160,12 +160,11 @@ function Registration(props) {
               fontSize={17}
               label="Password"
               required={true}
-              pattern="([a-z]|[A-Z]|[0-9]){4,50}"
+              pattern="^.{4,}$"
               data-testid="password"
             />
             <p data-testid="hint">
-              Should be at least and 4 characters in length. No special symbols
-              allowed.
+              Should be at least and 4 characters in length.
             </p>
           </div>
           <div className={style.form_item}>

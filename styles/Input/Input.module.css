@@ -7,7 +7,11 @@
   border: 2px solid #696c75;
 }
 
-.input:invalid:required {
+.required {
   border: 2px solid #d3aa14;
+}
+
+.invalid {
+  border: 2px solid #d25314;
 }
 /*# sourceMappingURL=Input.module.css.map */

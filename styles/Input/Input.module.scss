@@ -8,7 +8,17 @@
   outline: none;
   border: 2px solid $borderColor;
 
-  &:invalid:required {
-    border: 2px solid $requiredColor;
-  }
+  // &:invalid {
+  //   border: 2px solid $errorColor;
+  // }
+  // &:invalid:required {
+  //   border: 2px solid $requiredColor;
+  // }
+}
+.required {
+  border: 2px solid $requiredColor;
+}
+
+.invalid {
+  border: 2px solid $errorColor;
 }

@@ -11,7 +11,7 @@ import style from "../styles/Login/Login.module.css";
 
 import { endpoints, jwtConfig, routes } from "../config/constants";
 
-function Login({ isMobile }) {
+function Login(props) {
   //* Inputs setup
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -72,7 +72,7 @@ function Login({ isMobile }) {
             fontSize={17}
             label="Username"
             required={true}
-            pattern="([a-z]|[0-9]){2,8}"
+            pattern="([a-z]|[0-9]){2,50}"
             data-testid="username-input"
           />
 

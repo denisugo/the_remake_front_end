@@ -14,9 +14,26 @@ function Input({
   pattern = undefined,
   ...otherProps
 }) {
+  let classNameString = `${style.input}`;
+  //* Check if this input is required
+  if (required && value === "")
+    classNameString = classNameString.concat(" ", `${style.required}`);
+
+  //* Check if value matchs pattern
+  const regex = new RegExp(pattern);
+  if (!regex.exec(value) && value !== "")
+    classNameString = classNameString.concat(" ", `${style.invalid}`);
+
+  //* Check if this has its unique className
+  if (className !== "")
+    classNameString = classNameString.concat(" ", `${className}`);
+
   return (
     <input
-      className={`${style.input} ${className}`}
+      className={classNameString}
+      // className={`${style.input} ${
+      //   required && value === "" ? style.required : ""
+      // } ${regex.exec(value) && value !== "" ? style.invalid : ""} ${className}`}
       style={{ width, height, fontSize }}
       onChange={(event) => callback(event.target.value)}
       placeholder={placeholder}
