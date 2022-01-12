@@ -7,13 +7,6 @@
   border-radius: 0;
   outline: none;
   border: 2px solid $borderColor;
-
-  // &:invalid {
-  //   border: 2px solid $errorColor;
-  // }
-  // &:invalid:required {
-  //   border: 2px solid $requiredColor;
-  // }
 }
 .required {
   border: 2px solid $requiredColor;
