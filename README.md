@@ -42,7 +42,7 @@ Docs could be found in _Docs_ folder.
 
 ### Links
 
-This is the client app. It should work with [this API](https://github.com/denisugo/back_end_portfolio)
+This is the client app. It should work with [this API](https://github.com/denisugo/the_remake_back-end)
 
 ### Initial setup
 

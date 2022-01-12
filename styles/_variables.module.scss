@@ -1,0 +1,17 @@
+@import "./variables";
+
+// This file is used for connecting scss variables with js
+:export {
+  backgroundColor: $backgroundColor;
+  textColor: $textColor;
+  mainColor: $mainColor;
+  borderColor: $borderColor;
+  colorOne: $colorOne;
+  colorTwo: $colorTwo;
+  requiredColor: $requiredColor;
+  errorColor: $errorColor;
+  cancelColor: $cancelColor;
+  deliveredColor: $deliveredColor;
+  processingColor: $processingColor;
+  attentionColor: $attentionColor;
+}

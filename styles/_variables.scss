@@ -7,5 +7,20 @@ $colorTwo: #ecedf0;
 $requiredColor: #d3aa14;
 $errorColor: #d25314;
 $cancelColor: #d25314;
+$attentionColor: #d25314;
 $deliveredColor: #10b110;
 $processingColor: #d3aa14;
+
+// Sass variables that define breakpoint values
+$breakpoints: (
+  mobile: 375px,
+  tablet: 768px,
+  // etc.
+);
+
+// Sass variables for writing out media queries
+$media: (
+  mobile: "(max-width: #{map-get($breakpoints, mobile)})",
+  tablet: "(max-width: #{map-get($breakpoints, tablet)})",
+  // etc.
+);
