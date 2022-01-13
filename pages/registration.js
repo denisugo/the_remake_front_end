@@ -22,7 +22,7 @@ function Registration(props) {
     event.preventDefault();
 
     //* Retrieving a user
-    const url = `${process.env.HOST}${endpoints.register()}`;
+    const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.register()}`;
 
     //? Body should be ecoded as x-www-form-urlencoded
     const body = `${"username"}=${encodeURIComponent(

@@ -21,7 +21,9 @@ function Orders(props) {
     if (!user) router.push(routes.login);
     else
       (async () => {
-        const url = `${process.env.HOST}${endpoints.orders(user.id)}`;
+        const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.orders(
+          user.id
+        )}`;
         const items = await fetch(url, { credentials: "include" });
         if (items.ok) return setItems(await items.json());
       })();

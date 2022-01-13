@@ -24,7 +24,7 @@ function Cart({ user, cartItems }) {
     const body = { product_id };
 
     //* Generate url
-    const url = `${process.env.HOST}${endpoints.cart(user.id)}`;
+    const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.cart(user.id)}`;
 
     //* Make a request
     //? Body should be converted to 'application/json'
@@ -131,7 +131,7 @@ export const getServerSideProps = async (context) => {
   //* Fetch cart items
   let cartItems = [];
   //* Generate url
-  const url = `${process.env.HOST}${endpoints.cart()}`;
+  const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.cart()}`;
   const fetchedItems = await fetch(url, {
     credentials: "include",
     method: "GET",

@@ -30,13 +30,20 @@ export default Home;
 
 //TODO: Add decryption of JWT and retrieve a user
 export const getServerSideProps = async (context) => {
+  //* Display all env vars
+  console.log("process.env.NEXT_PUBLIC_HOST", process.env.NEXT_PUBLIC_HOST);
+  console.log("process.env.NEXT_PUBLIC_THIS", process.env.NEXT_PUBLIC_THIS);
+  console.log(
+    "process.env.NEXT_PUBLIC_STRIPE_PK",
+    process.env.NEXT_PUBLIC_STRIPE_PK
+  );
   // export const getServerSideProps = wrapper.getServerSideProps(
   //   (store) => async (context) => {
   // const connectSidCookie = context.req.cookies["connect.sid"];
   // const cookie = `connect.sid=${connectSidCookie}`;
   //? Setting up the product endpoint
   const endpoint = endpoints.products();
-  const url = `${process.env.HOST}${endpoint}`;
+  const url = `${process.env.NEXT_PUBLIC_HOST}${endpoint}`;
 
   //? Fetching the product list
   const response = await fetch(url, {
