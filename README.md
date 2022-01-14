@@ -44,6 +44,8 @@ Docs could be found in _Docs_ folder.
 
 This is the client app. It should work with [this API](https://github.com/denisugo/the_remake_back-end)
 
+You can also check this project out [at](https://frontend-portfolio-app.herokuapp.com)
+
 ### Initial setup
 
 To make it work, you should setup the environment variables that are provided in the following lines:

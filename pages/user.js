@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
 import router, { useRouter } from "next/router";
 import jwt from "jsonwebtoken";
 import Cookies from "universal-cookie";

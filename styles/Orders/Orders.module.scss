@@ -48,15 +48,16 @@
         background-color: $colorTwo;
 
         .name {
-          //   margin-right: auto;
+          align-self: center;
           padding: 0 10px;
           grid-area: name;
         }
         .quantity {
+          align-self: center;
           grid-area: quantity;
-          //   margin-right: 20px;
         }
         .product_id {
+          align-self: center;
           grid-area: product_id;
           padding: 0 10px 0 20px;
         }
