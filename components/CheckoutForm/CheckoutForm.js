@@ -7,8 +7,9 @@ import {
 } from "@stripe/react-stripe-js";
 import Button from "../Button/Button";
 import style from "../../styles/CheckoutForm/CheckoutForm.module.css";
+import styleVariables from "../../styles/_variables.module.scss";
 
-import { endpoints, routes } from "../../config/constants";
+import { endpoints } from "../../config/constants";
 
 export default function CheckoutForm({ user }) {
   //* Stripe setup
@@ -16,31 +17,42 @@ export default function CheckoutForm({ user }) {
   const elements = useElements();
 
   //* React state setup
-  const [message, setMessage] = useState("Local taxes could be applied");
+  const [message, setMessage] = useState("Loading, please wait");
   const [isLoading, setIsLoading] = useState(false);
   const [invalid, setInvalid] = useState(true);
+  const [required, setRequired] = useState(true);
   const [clientSecret, setClientSecret] = useState("");
   const [amount, setAmount] = useState(0);
 
   useEffect(() => {
     //* Create PaymentIntent as soon as the page loads
 
-    const url = `${process.env.HOST}${endpoints.checkout(user.id)}`;
+    const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.checkout()}`;
     fetch(url, {
       method: "POST",
       credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
+        //* Set up amount and client secret
         setClientSecret(data.clientSecret);
         setAmount(data.amount);
+        //* Set new message
+        setMessage("Local taxes may be applied!");
+      })
+      .catch(() => {
+        //* Set new message
+        setMessage("Your cart is probably empty");
       });
   }, []);
 
   //* Handler for cart data input
   const handleChange = (e) => {
-    if (e.complete) return invalid ? setInvalid(false) : null;
-    invalid ? null : setInvalid(true);
+    if (!e.empty) {
+      setRequired(false);
+      if (e.complete) return setInvalid(false);
+      setInvalid(true);
+    } else setRequired(true);
   };
 
   //* Handler for cart form submit
@@ -68,24 +80,27 @@ export default function CheckoutForm({ user }) {
       payment_method: paymentMethodReq.paymentMethod.id,
     });
 
-    //? Handle immidiate error
+    //* Handle immidiate error
     if (confiremedPayment.error) {
       setIsLoading(false);
       setMessage("An error occured. You payment cannot be finished");
       return;
     }
 
-    //? Check if payment has finished successfully
+    //* Check if payment has finished successfully
     if (confiremedPayment.paymentIntent.status === "succeeded") {
       //? Since processing has finished, there is no need to display this loading message
       setIsLoading(false);
       setMessage("Accepted!");
 
+      //* Retrieve transaction id
       const transaction_id = confiremedPayment.paymentIntent.id;
       console.log(transaction_id);
 
-      const url = `${process.env.HOST}${endpoints.orders(user.id)}`;
+      //* Generate url
+      const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.orders()}`;
 
+      //* Post to orders table
       await fetch(url, {
         method: "POST",
         credentials: "include",
@@ -111,7 +126,7 @@ export default function CheckoutForm({ user }) {
         fontSize: "17px",
       },
       invalid: {
-        iconColor: "#d3aa14",
+        iconColor: styleVariables.attentionColor,
       },
     },
     hidePostalCode: true,
@@ -122,7 +137,7 @@ export default function CheckoutForm({ user }) {
     return (
       <div>
         <div id={style.payment_message} data-testid="message">
-          Your cart is probably empty
+          {message}
         </div>
       </div>
     );
@@ -130,7 +145,9 @@ export default function CheckoutForm({ user }) {
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
       <CardElement
-        className={`${style.payment_element} ${invalid ? style.invalid : ""}`}
+        className={`${style.payment_element} ${invalid ? style.invalid : ""}  ${
+          required ? style.required : ""
+        }`}
         options={options}
         onChange={handleChange}
         data-testid="card"

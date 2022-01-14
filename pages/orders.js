@@ -1,8 +1,5 @@
-import { useSelector } from "react-redux";
-import { getUser, selectUser } from "../features/UserSlice/UserSlice";
 import router from "next/router";
 import React, { useState } from "react";
-import jwt from "jsonwebtoken";
 
 import Input from "../components/Input/Input";
 import Button from "../components/Button/Button";
