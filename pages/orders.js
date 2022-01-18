@@ -1,8 +1,5 @@
-import router from "next/router";
-import React, { useState } from "react";
+import React from "react";
 
-import Input from "../components/Input/Input";
-import Button from "../components/Button/Button";
 import Meta from "../components/Head/Meta";
 import { endpoints, routes } from "../config/constants";
 import style from "../styles/Orders/Orders.module.css";

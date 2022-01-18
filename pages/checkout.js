@@ -10,8 +10,8 @@ import { jwtConfig, routes } from "../config/constants";
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PK);
 
 function Checkout({ user }) {
-  //TODO: Check this warning
-  //! Unsupported prop change on Elements: You cannot change the `stripe` prop after setting it.
+  //TODO: Check this warning: Unsupported prop change on Elements: You cannot change the `stripe` prop after setting it.
+
   //* Setup strip appearence
   const appearance = {
     theme: "stripe",

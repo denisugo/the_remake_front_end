@@ -1,5 +1,11 @@
 # The remake (front-end)
 
+## Important note!
+
+herokuapp.com is included in the Mozilla Foundation’s Public Suffix List. This list is used in recent versions of several browsers, such as Firefox, Chrome and Opera, to limit how broadly a cookie may be scoped. In other words, in browsers that support the functionality, applications in the herokuapp.com domain are prevented from setting cookies for _.herokuapp.com. Note that _.herokuapp.com cookies can currently be set in Internet Explorer, but this behavior should not be relied upon and may change in the future.
+
+Therefore this app doesn't have an ability to set all necessary cookies while it is hosted on Heroku with an its default domain.
+
 ## Overview
 
 This is the remake of my previous portfolio project. It is aimed for improving all the cons of the project. The Sql database remains the same, back-end part should be slightly upgraded, front-end will also get more features.

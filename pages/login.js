@@ -1,4 +1,4 @@
-import react, { useEffect, useState } from "react";
+import { useState } from "react";
 
 import router from "next/router";
 import jwt from "jsonwebtoken";

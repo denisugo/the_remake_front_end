@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import router from "next/router";
 import jwt from "jsonwebtoken";
 import Cookies from "universal-cookie";

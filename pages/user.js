@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import router, { useRouter } from "next/router";
+import router from "next/router";
 import jwt from "jsonwebtoken";
 import Cookies from "universal-cookie";
 
