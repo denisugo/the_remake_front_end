@@ -27,9 +27,9 @@ describe("Login page", () => {
   });
 
   describe("Rendering", () => {
-    it("Should render 2 buttons", () => {
+    it("Should render 3 buttons", () => {
       const buttons = findByComponent("Button", wrapper);
-      expect(buttons.length).toBe(2);
+      expect(buttons.length).toBe(3);
     });
     it("Should render 2 inputs", () => {
       const fields = findByComponent("Input", wrapper);
@@ -111,9 +111,16 @@ describe("Login page", () => {
     });
   });
 
-  describe("Redirect to registration", () => {
+  describe("Redirecting", () => {
     it("Should redirect to registration page", () => {
       const button = findByDataTest("to-register-button", wrapper);
+      expect(button.length).toBe(1);
+
+      button.dive().simulate("click");
+      expect(router.default.push.mock.calls.length).toBe(1);
+    });
+    it("Should redirect to facebook.com", () => {
+      const button = findByDataTest("facebook-button", wrapper);
       expect(button.length).toBe(1);
 
       button.dive().simulate("click");

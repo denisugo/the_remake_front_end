@@ -10,6 +10,7 @@ import Meta from "../components/Head/Meta";
 import style from "../styles/Login/Login.module.css";
 
 import { endpoints, jwtConfig, routes } from "../config/constants";
+import { FacebookIcon } from "../components/Icons";
 
 function Login(props) {
   //* Inputs setup
@@ -109,6 +110,26 @@ function Login(props) {
             fontSize={17}
             callback={() => router.push(routes.registration)}
             data-testid="to-register-button"
+          />
+        </div>
+        <div className={style.facebook_button}>
+          <Button
+            text="Login via favebook"
+            height={50}
+            width={250}
+            label="facebook"
+            fontSize={17}
+            IconComponent={FacebookIcon}
+            callback={() => {
+              router.push(
+                `${process.env.NEXT_PUBLIC_HOST}${endpoints.facebook()}`
+
+                //? Fake credentials are
+                //? username xrzqwtydou_1642517991@tfbnw.net
+                //? password Secret0001
+              );
+            }}
+            data-testid="facebook-button"
           />
         </div>
       </div>

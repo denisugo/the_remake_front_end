@@ -32,6 +32,17 @@
   height: 100vh;
   top: 130px;
 
+  p {
+    padding: 10px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
   .two_button_container {
     display: flex;
     width: 250px;

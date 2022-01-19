@@ -1,6 +1,3 @@
-import * as reactRedux from "react-redux";
-import * as UserSlice from "../../features/UserSlice/UserSlice";
-
 import Nav from "../../components/Nav/Nav.js";
 import { routes } from "../../config/constants.js";
 import {
@@ -12,9 +9,6 @@ import {
 
 describe("Nav", () => {
   const props = { user: null };
-
-  reactRedux.useSelector = jest.fn().mockReturnValue(null);
-  UserSlice.selectUser = jest.fn();
 
   const wrapper = setUp(Nav, props);
 
@@ -32,20 +26,22 @@ describe("Nav", () => {
     const login = findByComponent("Link", wrapper).at(2);
     expect(login.length).toBe(1);
     expect(login.get(0).props).toHaveProperty("href", routes.login);
+
     const cart = findByComponent("Link", wrapper).at(1);
     expect(cart.length).toBe(1);
     expect(cart.get(0).props).toHaveProperty("href", routes.login);
   });
 
   it("Should render link to /user", () => {
-    // reassign values
+    //* reassign values
     const props = { user: { id: 1 } };
-    reactRedux.useSelector = jest.fn().mockReturnValue({ user: { id: 1 } });
-    UserSlice.selectUser = jest.fn();
+
     const wrapper = setUp(Nav, props);
+
     const user = findByComponent("Link", wrapper).at(2);
     expect(user.length).toBe(1);
     expect(user.get(0).props).toHaveProperty("href", routes.user);
+
     const cart = findByComponent("Link", wrapper).at(1);
     expect(cart.length).toBe(1);
     expect(cart.get(0).props).toHaveProperty("href", routes.cart);

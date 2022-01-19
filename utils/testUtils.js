@@ -1,31 +1,11 @@
-import { shallow, mount } from "enzyme";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-const { By } = require("selenium-webdriver");
+import { shallow } from "enzyme";
 
-//import ProductSlice from "../features/ProductSlice/ProductSlice";
-import UserSlice from "../features/UserSlice/UserSlice";
+const { By } = require("selenium-webdriver");
 
 export const setUp = (Component, props, path) => {
   const wrapper = shallow(<Component {...props} />);
   return wrapper;
 };
-// export const setUpRedux = (Component, props) => {
-//   const store = configureStore({
-//     reducer: {
-//       user: UserSlice,
-//       //TODO: Add reducers
-//     },
-//   });
-
-//   const wrapper = mount(
-//     <Provider store={store}>
-//       <Component {...props} />
-//     </Provider>
-//   );
-
-//   return wrapper;
-// };
 
 export const findByDataTestSelenium = async (attr, driver) => {
   const elements = await driver.findElements(By.css(`[data-testid='${attr}']`));

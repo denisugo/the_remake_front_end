@@ -9,6 +9,7 @@ function Button({
   label = "button",
   className = "",
   disabled = false,
+  IconComponent = null,
   ...otherProps
 }) {
   return (
@@ -24,6 +25,7 @@ function Button({
       onSelect={callback}
       disabled={disabled}
     >
+      {IconComponent && <IconComponent />}
       <p>{text}</p>
     </button>
   );
