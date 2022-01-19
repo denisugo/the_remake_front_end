@@ -1,12 +1,8 @@
-import { useSelector } from "react-redux";
-import { getUser, selectUser } from "../features/UserSlice/UserSlice";
 import router from "next/router";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import jwt from "jsonwebtoken";
-import Cookies from "universal-cookie";
 
-import Input from "../components/Input/Input";
 import Button from "../components/Button/Button";
 import Meta from "../components/Head/Meta";
 import { endpoints, jwtConfig, routes } from "../config/constants";

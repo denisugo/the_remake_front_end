@@ -1,5 +1,3 @@
-import * as React from "react";
-
 const SvgCartIcon = (props) => (
   <svg
     viewBox="0 0 80 80"

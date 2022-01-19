@@ -1,7 +1,4 @@
 import cart from "../../pages/cart";
-import * as reactRedux from "react-redux";
-import React from "react";
-import * as UserSlice from "../../features/UserSlice/UserSlice";
 import * as router from "next/router";
 import {
   findByDTextChildren,

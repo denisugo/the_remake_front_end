@@ -12,7 +12,7 @@ describe("Selenium Orders page", () => {
   const adminUsername = "jb";
   const adminPassword = "secret";
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await driver.get("http://localhost:3000/orders");
   });
 
@@ -25,39 +25,39 @@ describe("Selenium Orders page", () => {
 
   describe("User flow", () => {
     it("Should be redirected to login page when no valid cookie provided", async () => {
+      //* Wait for redirection
+      await driver.wait(until.urlIs("http://localhost:3000/login"), 3000);
+
       //* Page title
       const title = await driver.getTitle();
       expect(title).toBe("Login page");
     });
 
-    //* It will create a user for futher updating its details
+    //* It will create cookies
     it("Should redirect to user", async () => {
-      const button = (await findByDataTestSelenium("button", driver))[0]; //  Log me in
-      const usernameField = (await findByDataTestSelenium("input", driver))[0];
-      const passwordField = (await findByDataTestSelenium("input", driver))[1];
+      //* Wait for redirection
+      await driver.wait(until.urlIs("http://localhost:3000/login"), 3000);
+
+      //* Standard login process from login page test
+      //* Locate inputs and insert credentials
+      const usernameField = (
+        await findByDataTestSelenium("username-input", driver)
+      )[0];
+      const passwordField = (
+        await findByDataTestSelenium("password-input", driver)
+      )[0];
 
       await usernameField.sendKeys(nonAdminUsername);
       await passwordField.sendKeys(nonAdminPassword);
 
-      const actions = driver.actions({ async: true });
-      await actions.move({ origin: button }).press().release().perform();
+      //* Locate login button and click on it
+      const button = (await findByDataTestSelenium("login-button", driver))[0];
+      button.click();
 
+      //* Wait for redirection
       await driver.wait(until.urlIs("http://localhost:3000/user"), 3000);
       const url = await driver.getCurrentUrl();
       expect(url).toBe(`http://localhost:3000/user`);
-
-      //* Navigate to cart page
-      const navigation = (
-        await findByDataTestSelenium("navigation", driver)
-      )[0];
-      const link = (await findByComponentSelenium("a", navigation))[1]; // cart link
-      link.click();
-      await driver.wait(until.urlIs("http://localhost:3000/cart"), 3000);
-
-      const buttons = await findByDataTestSelenium("button", driver);
-      const orderButton = buttons[buttons.length - 1];
-      orderButton.click();
-      await driver.wait(until.urlIs("http://localhost:3000/orders"), 3000);
     });
 
     it("Should open Orders page", async () => {
@@ -65,8 +65,8 @@ describe("Selenium Orders page", () => {
       const title = await driver.getTitle();
       expect(title).toBe("Orders");
 
-      //* Nav bar content
-      const svgs = await findByComponentSelenium("svg", driver); // Navigation icons
+      //* Nav bar conten
+      const svgs = await findByComponentSelenium("svg", driver); //? Navigation icons
       expect(svgs.length).toBe(3);
       const logo = await findByDataTestSelenium("logo", driver);
       expect(logo.length).toBe(1);

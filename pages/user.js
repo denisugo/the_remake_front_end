@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import router, { useRouter } from "next/router";
+import router from "next/router";
 import jwt from "jsonwebtoken";
 import Cookies from "universal-cookie";
 
@@ -12,6 +11,23 @@ import { endpoints, jwtConfig, routes } from "../config/constants";
 import style from "../styles/User/User.module.css";
 
 function User({ user }) {
+  //? This should fix a facebook's bug
+  useEffect(() => {
+    if (window.location.hash === "#_=_") {
+      //* Check if the browser supports history.replaceState.
+      if (history.replaceState) {
+        //* Keep the exact URL up to the hash.
+        const cleanHref = window.location.href.split("#")[0];
+
+        //* Replace the URL in the address bar without messing with the back button.
+        history.replaceState(null, null, cleanHref);
+      } else {
+        //* Well, you're on an old browser, we can get rid of the _=_ but not the #.
+        window.location.hash = "";
+      }
+    }
+  }, []);
+
   //* State setup
   //* User fields setup
   const [username, setUsername] = useState(user ? user.username : undefined);
@@ -33,7 +49,8 @@ function User({ user }) {
   //* Pattern setup
   let pattern = "";
   if (fieldName === "username") {
-    pattern = "([a-z]|[0-9]){2,50}";
+    //? This pattern prevent matching 'facebook' in the new username
+    pattern = "(^((?!facebook)[a-z]|[0-9]){2,50}$)";
   }
   if (fieldName === "password") {
     pattern = "([a-z]|[A-Z]|[0-9]){4,50}";
@@ -132,7 +149,7 @@ function User({ user }) {
     const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.logout()}`;
 
     //* Send a logout request
-    //? It will also reset connect.id cookie
+    //? It will also reset connect.sid cookie
     await fetch(url, {
       method: "GET",
       credentials: "include",
@@ -242,7 +259,7 @@ function User({ user }) {
         <div className={style.edit_box} data-testid="edit-box">
           <p data-testid="hint">
             {fieldName === "username" &&
-              "Should be lowercase and at least 2 characters in length. No special symbols allowed."}
+              "Should be lowercase and at least 2 characters in length. No special symbols allowed. Cannot contain 'facebook' word within your username."}
             {fieldName === "password" &&
               "Should be at least and 4 characters in length. No special symbols allowed."}
             {fieldName === "email" &&

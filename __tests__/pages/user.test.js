@@ -1,7 +1,5 @@
-import * as reactRedux from "react-redux";
-import * as UserSlice from "../../features/UserSlice/UserSlice";
 import * as router from "next/router";
-import React from "react";
+
 import * as jwt from "jsonwebtoken";
 
 import user from "../../pages/user";

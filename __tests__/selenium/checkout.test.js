@@ -1,8 +1,3 @@
-//! Ensure that admin user has some items in their cart
-//! Non admin user has to have an empty cart
-
-//! It is strongly recomended to add only one item to the cart befor running this test
-
 const { Builder, until, By } = require("selenium-webdriver");
 const { selectUserError } = require("../../features/UserSlice/UserSlice");
 const {
@@ -12,56 +7,67 @@ const {
 
 const driver = new Builder().forBrowser("chrome").build();
 
+//! Ensure that admin user has some items in their cart
+//! Non admin user has to have an empty cart
+//! It is strongly recomended to add only one item to the cart befor running this test
+
 describe("Selenium Cart page", () => {
+  //* Test card numbers
   const noErrorCardNumber = "4242424242424242";
   const errorCardNumber = "4000000000000002";
   const invalidCardNumber = "1111111111111111";
 
+  //* Card details
   const validUntil = "0222";
   const cvc = "222";
 
+  //* Credentials
   const nonAdminUsername = "davy000";
   const nonAdminPassword = "treasure";
   const adminUsername = "jb";
   const adminPassword = "secret";
 
   const login = async (username, password) => {
-    //? Redirect if not login page
-    const currentUrl = await driver.getCurrentUrl();
-    if (currentUrl !== "http://localhost:3000/login")
-      await driver.get("http://localhost:3000/checkout");
+    //* Redirect if not login page
+    if ((await driver.getCurrentUrl()) !== "http://localhost:3000/login") {
+      await driver.get("http://localhost:3000/login");
 
-    //? Locate username and password fields
-    const usernameField = (await findByDataTestSelenium("input", driver))[0];
-    const passwordField = (await findByDataTestSelenium("input", driver))[1];
+      //* Wait for redirection
+      await driver.wait(async () => {
+        //? If it redirects to user page, that means that user was already logged in
+        if ((await driver.getCurrentUrl()) === "http://localhost:3000/user") {
+          //* Locate logout button and click it
+          const button = (await findByDataTestSelenium("logout", driver))[0];
+          button.click();
 
-    //? Set up values of its fields
+          //* Wait for redirection
+          await driver.wait(until.urlIs("http://localhost:3000/login"), 3000);
+        }
+        return (await driver.getCurrentUrl()) === "http://localhost:3000/login";
+      }, 3000);
+    }
+
+    //* Standard login process from login page test
+    //* Locate inputs and insert credentials
+    const usernameField = (
+      await findByDataTestSelenium("username-input", driver)
+    )[0];
+    const passwordField = (
+      await findByDataTestSelenium("password-input", driver)
+    )[0];
+
     await usernameField.sendKeys(username);
     await passwordField.sendKeys(password);
 
-    //? Submit the form
-    const button = (await findByDataTestSelenium("button", driver))[0]; //  Log me in
+    //* Locate login button and click on it
+    const button = (await findByDataTestSelenium("login-button", driver))[0];
     button.click();
 
-    //? Wait until it redirects to the user page
+    //* Wait for redirection
     await driver.wait(until.urlIs("http://localhost:3000/user"), 3000);
-    const url = await driver.getCurrentUrl();
-
-    //? Navigate to the cart page
-    const navigation = (await findByDataTestSelenium("navigation", driver))[0];
-    const link = (await findByComponentSelenium("a", navigation))[1]; // cart link
-    link.click();
-    await driver.wait(until.urlIs("http://localhost:3000/cart"), 3000);
-
-    const cartPageButtons = await findByDataTestSelenium("button", driver);
-
-    //? Navigate to the checkout page
-    const checkoutButton = cartPageButtons[cartPageButtons.length - 1 - 1];
-    checkoutButton.click();
-    await driver.wait(until.urlIs("http://localhost:3000/checkout"), 3000);
   };
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await driver.get("http://localhost:3000/checkout");
   });
 
@@ -75,7 +81,7 @@ describe("Selenium Cart page", () => {
   describe("User flow", () => {
     describe("Redirection when no user is registered", () => {
       it("Should be redirected to login page when no valid cookie provided", async () => {
-        //Page title
+        //*Page title
         const title = await driver.getTitle();
         expect(title).toBe("Login page");
       });
@@ -83,8 +89,12 @@ describe("Selenium Cart page", () => {
 
     describe("Tests with users", () => {
       it("Should open checkout page", async () => {
-        //? Log a usser in
+        //* Log a usser in
         await login(nonAdminUsername, nonAdminPassword);
+
+        //* Wait for redirection
+        await driver.get("http://localhost:3000/checkout");
+        await driver.wait(until.urlIs("http://localhost:3000/checkout"), 3000);
 
         //* Page title
         const title = await driver.getTitle();
@@ -98,24 +108,32 @@ describe("Selenium Cart page", () => {
       });
 
       it("Should show a message that this user does not have any items in their cart", async () => {
+        //* Locate message
         const message = (await findByDataTestSelenium("message", driver))[0];
         expect(await message.getText()).toBe("Your cart is probably empty");
 
+        //* Locate button
+        //? It should not show the button when no items are in the cart
         const buttons = await findByDataTestSelenium("button", driver);
         expect(buttons.length).toBe(0);
       });
 
       it("Should show error message when payment decclined", async () => {
-        //? Log a usser in
+        //* Log a usser in
         await login(adminUsername, adminPassword);
 
-        //? Recieve client secret
+        //* Wait for redirection
+        await driver.get("http://localhost:3000/checkout");
+        await driver.wait(until.urlIs("http://localhost:3000/checkout"), 3000);
+
+        //* Recieve client secret
+        //? When the secret is recieved, this warning message should appear
         await driver.wait(async () => {
           const message = (await findByDataTestSelenium("message", driver))[0];
-          return (await message.getText()) === "Local taxes could be applied";
+          return (await message.getText()) === "Local taxes may be applied!";
         }, 5000);
 
-        //? Switch to iframe
+        //*  Switch to iframe
         let iframe;
         await driver.wait(async () => {
           iframe = (await findByComponentSelenium("iframe", driver))[0];
@@ -124,7 +142,7 @@ describe("Selenium Cart page", () => {
 
         await driver.switchTo().frame(iframe);
 
-        //? Setting up a card field
+        //* Set up a card field
 
         //? Unable to search by attribute,
         //? The order is following:
@@ -133,6 +151,7 @@ describe("Selenium Cart page", () => {
         //? 3 - cvc
 
         //? Sometimes it might not send keys successfully, I dont know why.
+
         await driver.wait(async () => {
           const cardInputFields = await findByComponentSelenium(
             "input",
@@ -148,18 +167,18 @@ describe("Selenium Cart page", () => {
           return true;
         }, 5000);
 
-        //? Switch back
+        //* Switch back
         await driver.switchTo().defaultContent();
         //? Submitting
         (await findByDataTestSelenium("button", driver))[0].click();
 
-        //? Check the message to be 'Processing your payment...'
+        //* Check the message to be 'Processing your payment...'
         await driver.wait(async () => {
           const message = (await findByDataTestSelenium("message", driver))[0];
           return (await message.getText()) === "Processing your payment...";
         }, 3000);
 
-        //? Check the message to be 'Accepted!'
+        //* Check the message to be 'Accepted!'
         await driver.wait(async () => {
           const message = (await findByDataTestSelenium("message", driver))[0];
           return (
@@ -170,16 +189,20 @@ describe("Selenium Cart page", () => {
       }, 20000);
 
       it("Should do nothing when card number is not valid", async () => {
-        //? Log a usser in
+        //* Log a usser in
         await login(adminUsername, adminPassword);
 
-        //? Recieve client secret
+        //* Wait for redirection
+        await driver.get("http://localhost:3000/checkout");
+        await driver.wait(until.urlIs("http://localhost:3000/checkout"), 3000);
+
+        //* Recieve client secret
         await driver.wait(async () => {
           const message = (await findByDataTestSelenium("message", driver))[0];
-          return (await message.getText()) === "Local taxes could be applied";
+          return (await message.getText()) === "Local taxes may be applied!";
         }, 5000);
 
-        //? Switch to iframe
+        //* Switch to iframe
         let iframe;
         await driver.wait(async () => {
           iframe = (await findByComponentSelenium("iframe", driver))[0];
@@ -188,7 +211,7 @@ describe("Selenium Cart page", () => {
 
         await driver.switchTo().frame(iframe);
 
-        //? Setting up a card field
+        //* Set up a card field
 
         //? Unable to search by attribute,
         //? The order is following:
@@ -212,7 +235,7 @@ describe("Selenium Cart page", () => {
           return true;
         }, 5000);
 
-        //? Switch back
+        //* Switch back
         await driver.switchTo().defaultContent();
         //? Submitting
         (await findByDataTestSelenium("button", driver))[0].click();
@@ -220,19 +243,24 @@ describe("Selenium Cart page", () => {
         //? Nothing should change during 3s
         await new Promise((resolve) => setTimeout(resolve, 3000));
         const message = (await findByDataTestSelenium("message", driver))[0];
-        expect(await message.getText()).toBe("Local taxes could be applied");
+        expect(await message.getText()).toBe("Local taxes may be applied!");
       }, 20000);
 
-      it("Should show success message when payment finished", async () => {
-        //? Log a usser in
+      it("Should show success message when payment finished, cart should be empty", async () => {
+        //* Log a usser in
         await login(adminUsername, adminPassword);
-        //? Recieve client secret
+
+        //* Wait for redirection
+        await driver.get("http://localhost:3000/checkout");
+        await driver.wait(until.urlIs("http://localhost:3000/checkout"), 3000);
+
+        //* Recieve client secret
         await driver.wait(async () => {
           const message = (await findByDataTestSelenium("message", driver))[0];
-          return (await message.getText()) === "Local taxes could be applied";
+          return (await message.getText()) === "Local taxes may be applied!";
         }, 5000);
 
-        //? Switch to iframe
+        //* Switch to iframe
         let iframe;
         await driver.wait(async () => {
           iframe = (await findByComponentSelenium("iframe", driver))[0];
@@ -241,7 +269,7 @@ describe("Selenium Cart page", () => {
 
         await driver.switchTo().frame(iframe);
 
-        //? Setting up a card field
+        //* Set up a card field
 
         //? Unable to search by attribute,
         //? The order is following:
@@ -265,26 +293,24 @@ describe("Selenium Cart page", () => {
           return true;
         }, 5000);
 
-        //? Switch back
+        //* Switch back
         await driver.switchTo().defaultContent();
         //? Submitting
         (await findByDataTestSelenium("button", driver))[0].click();
 
-        //? Check the message to be 'Processing your payment...'
+        //* Check the message to be 'Processing your payment...'
         await driver.wait(async () => {
           const message = (await findByDataTestSelenium("message", driver))[0];
           return (await message.getText()) === "Processing your payment...";
         }, 3000);
 
-        //? Check the message to be 'Accepted!'
+        //* Check the message to be 'Accepted!'
         await driver.wait(async () => {
           const message = (await findByDataTestSelenium("message", driver))[0];
           return (await message.getText()) === "Accepted!";
         }, 10000);
 
-        //TODO: go to the card page and check the number of card items
-
-        //? Navigate to the cart page
+        //* Navigate to the cart page
         const navigation = (
           await findByDataTestSelenium("navigation", driver)
         )[0];
@@ -295,18 +321,16 @@ describe("Selenium Cart page", () => {
         const cartItems = await findByDataTestSelenium("cart-item", driver);
         expect(cartItems.length).toBe(0);
 
-        //? Navigate to the orders page
-        const cartPageButtons = await findByDataTestSelenium("button", driver);
-        const checkoutButton = cartPageButtons[cartPageButtons.length - 1];
-        checkoutButton.click();
+        //* Navigate to the orders page
+        const ordersButton = (
+          await findByDataTestSelenium("view-orders-button", driver)
+        )[0];
+        ordersButton.click();
         await driver.wait(until.urlIs("http://localhost:3000/orders"), 3000);
 
         //? Here should be at least one product that originally was in the cart
 
-        // await driver.wait(async () => {
-        //     const products = await findByDataTestSelenium("product", driver);
-        //   return products.length !== 0;
-        // }, 3000);
+        //* Locate all products
         const products = await findByDataTestSelenium("product", driver);
         expect(products.length).not.toBe(0);
       }, 20000);

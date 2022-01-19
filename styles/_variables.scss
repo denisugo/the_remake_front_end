@@ -1,3 +1,4 @@
+//* Color palette
 $backgroundColor: #f9f9fa;
 $textColor: #324248;
 $mainColor: #919ed0;
@@ -11,14 +12,14 @@ $attentionColor: #d25314;
 $deliveredColor: #10b110;
 $processingColor: #d3aa14;
 
-// Sass variables that define breakpoint values
+//* Sass variables that define breakpoint values
 $breakpoints: (
   mobile: 375px,
   tablet: 768px,
   // etc.
 );
 
-// Sass variables for writing out media queries
+//* Sass variables for writing out media queries
 $media: (
   mobile: "(max-width: #{map-get($breakpoints, mobile)})",
   tablet: "(max-width: #{map-get($breakpoints, tablet)})",

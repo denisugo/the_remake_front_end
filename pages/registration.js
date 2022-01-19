@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import router from "next/router";
 import jwt from "jsonwebtoken";
 import Cookies from "universal-cookie";
@@ -141,12 +141,13 @@ function Registration(props) {
               fontSize={17}
               label="Username"
               required={true}
-              pattern="([a-z]|[0-9]){2,50}"
+              pattern="(^((?!facebook)[a-z]|[0-9]){2,50}$)"
               data-testid="username"
             />
             <p data-testid="hint">
-              Should be lowercase and at least 2 characters in length. No
-              special symbols allowed.
+              {
+                "Should be lowercase and at least 2 characters in length. No special symbols allowed. Cannot contain 'facebook' word within your username."
+              }
             </p>
           </div>
           <div className={style.form_item}>

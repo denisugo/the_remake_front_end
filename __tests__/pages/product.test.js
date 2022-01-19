@@ -1,7 +1,4 @@
 import product from "../../pages/product";
-import * as reactRedux from "react-redux";
-import * as UserSlice from "../../features/UserSlice/UserSlice";
-import * as router from "next/router";
 import {
   findByDTextChildren,
   findByDataTest,

@@ -51,6 +51,7 @@ export const getServerSideProps = async (context) => {
     //   Cookie: connectSidCookie ? cookie : "",
     // },
   });
+
   //? If there was an error, then no products are displayed
   if (!response.ok)
     return {

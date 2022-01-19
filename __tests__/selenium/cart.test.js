@@ -60,15 +60,6 @@ describe("Selenium Cart page", () => {
       await driver.wait(until.urlIs("http://localhost:3000/user"), 3000);
       const url = await driver.getCurrentUrl();
       expect(url).toBe(`http://localhost:3000/user`);
-
-      //* Navigate back to cart page
-      //* Locate correct link and click it
-      const navigation = (
-        await findByDataTestSelenium("navigation", driver)
-      )[0];
-      const link = (await findByComponentSelenium("a", navigation))[1]; //? cart link
-      link.click();
-      await driver.wait(until.urlIs("http://localhost:3000/cart"), 3000);
     });
 
     it("Should open cart page", async () => {

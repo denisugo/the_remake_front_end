@@ -1,4 +1,3 @@
-import router from "next/router";
 import Image from "next/image";
 
 import Input from "../components/Input/Input";

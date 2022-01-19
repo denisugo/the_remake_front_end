@@ -1,36 +1,10 @@
-import { useSelector } from "react-redux";
-import { getUser, selectUser } from "../features/UserSlice/UserSlice";
-import router from "next/router";
-import Image from "next/image";
-import React, { useState } from "react";
+import React from "react";
 
-import Input from "../components/Input/Input";
-import Button from "../components/Button/Button";
 import Meta from "../components/Head/Meta";
 import { endpoints, routes } from "../config/constants";
 import style from "../styles/Orders/Orders.module.css";
 
-function Orders(props) {
-  const user = useSelector(selectUser);
-
-  //* items here have the object type
-  const [items, setItems] = useState({});
-
-  //* Useeffect is used because of ssr
-  React.useEffect(() => {
-    if (!user) router.push(routes.login);
-    else
-      (async () => {
-        const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.orders(
-          user.id
-        )}`;
-        const items = await fetch(url, { credentials: "include" });
-        if (items.ok) return setItems(await items.json());
-      })();
-  }, [user]);
-
-  if (!user) return <div>No user found</div>;
-
+function Orders({ items }) {
   return (
     <>
       <Meta title="Orders" description="test" />
@@ -79,3 +53,37 @@ function Orders(props) {
 }
 
 export default Orders;
+
+export const getServerSideProps = async (context) => {
+  //* Check if user cookie is set
+  //? If not, redirect to login page to attempt to sign in
+  if (!context.req.cookies.user)
+    return {
+      redirect: {
+        destination: routes.login,
+        permanent: false,
+      },
+    };
+
+  //* Fetch order items
+  let items = {};
+  //* Generate url
+  const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.orders()}`;
+
+  const fetchedItems = await fetch(url, {
+    credentials: "include",
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Cookie: `connect.sid=${context.req.cookies["connect.sid"]}`,
+    },
+  });
+  //? If fetched successfully, retrieve cart items array
+  if (fetchedItems.ok) items = await fetchedItems.json();
+
+  return {
+    props: {
+      items,
+    },
+  };
+};

@@ -71,6 +71,9 @@
 }
 
 .orders .order .products .product .name {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
   padding: 0 10px;
   -ms-grid-row: 1;
   -ms-grid-column: 1;
@@ -78,12 +81,18 @@
 }
 
 .orders .order .products .product .quantity {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
   -ms-grid-row: 1;
   -ms-grid-column: 2;
   grid-area: quantity;
 }
 
 .orders .order .products .product .product_id {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
   -ms-grid-row: 1;
   -ms-grid-column: 3;
   grid-area: product_id;

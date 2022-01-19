@@ -1,10 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
 
 import { routes } from "../../config/constants";
-import { selectUser } from "../../features/UserSlice/UserSlice";
+
 import style from "../../styles/Nav/Nav.module.css";
 import { CartIcon, HomeIcon, UserIcon } from "../Icons";
 

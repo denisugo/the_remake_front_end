@@ -6,6 +6,10 @@
 }
 
 .invalid {
+  border: 2px solid #d25314;
+}
+
+.required {
   border: 2px solid #d3aa14;
 }
 
