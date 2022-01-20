@@ -114,6 +114,31 @@ function Product({ id, name, description, price, preview, user }) {
           </div>
         )}
       </div>
+      {user && user.is_admin && (
+        //? Should only be visible when an admin user opens this page
+        <>
+          <Button
+            className={style.service_button}
+            fontSize={17}
+            width={150}
+            height={50}
+            text="Delete product"
+            label="Delete"
+            // callback={handleYouShouldLogin}
+            data-testid="delete-button"
+          />
+          <Button
+            className={style.service_button}
+            fontSize={17}
+            width={150}
+            height={50}
+            text="Update product"
+            label="Update"
+            // callback={handleYouShouldLogin}
+            data-testid="update-button"
+          />
+        </>
+      )}
     </>
   );
 }

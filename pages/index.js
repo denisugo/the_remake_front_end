@@ -6,13 +6,10 @@ import Header from "../components/Header/Header";
 import ProductList from "../components/ProductList/ProductList";
 import Search from "../components/Search/Search";
 import { endpoints, routes, jwtConfig } from "../config/constants";
-import Button from "../components/Button/Button";
 import NewProduct from "../components/NewProduct/NewProduct";
 
 function Home({ list, user }) {
-  // export default function Home({ list, user, isMobile }) {
-  //TODO: select user, render 'add new' button if admin
-
+  //* State setup
   const [productList, setProductList] = useState(list);
 
   return (
@@ -21,7 +18,11 @@ function Home({ list, user }) {
       <Header />
       <Search list={list} callback={setProductList} />
       <ProductList list={productList} />
-      <NewProduct callback={setProductList} />
+      {user && user.is_admin && (
+        <NewProduct
+          callback={(newItem) => setProductList([...productList, newItem])}
+        />
+      )}
     </>
   );
 }

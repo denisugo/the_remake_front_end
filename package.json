@@ -6,8 +6,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --watch ./__tests__/pages/ ./__tests__/components/ ./__tests__/getProps/ ./__tests__/features/",
-    "selenium": "jest ./__tests__/selenium/cart.test.js"
+    "test": "jest --watch ./__tests__/pages/ ./__tests__/components/ ./__tests__/getProps/",
+    "selenium": "jest ./__tests__/selenium/index.test.js"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^1.7.0",

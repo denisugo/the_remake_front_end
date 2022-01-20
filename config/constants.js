@@ -11,6 +11,7 @@ export const routes = {
 
 export const endpoints = {
   products: () => "/products",
+  product: (id) => `/products/${id}`,
   login: () => "/login",
   facebook: () => "/login/facebook",
   logout: () => `/users/logout`,

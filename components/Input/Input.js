@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import style from "../../styles/Input/Input.module.css";
 
 function Input({
@@ -28,27 +29,28 @@ function Input({
   if (className !== "")
     classNameString = classNameString.concat(" ", `${className}`);
 
-  return (
-    <input
-      className={classNameString}
-      // className={`${style.input} ${
-      //   required && value === "" ? style.required : ""
-      // } ${regex.exec(value) && value !== "" ? style.invalid : ""} ${className}`}
-      style={{ width, height, fontSize }}
-      onChange={(event) => callback(event.target.value)}
-      placeholder={placeholder}
-      type={type}
-      value={value}
-      onInvalid={(event) => event.preventDefault()}
-      required={required}
-      autoComplete="off"
-      name={label}
-      aria-label={label}
-      data-testid={
-        otherProps["data-testid"] ? otherProps["data-testid"] : "input"
-      }
-      pattern={pattern}
-    />
+  //? With useMemo hook it will stop re-render unless classname or value are changed
+  return useMemo(
+    () => (
+      <input
+        className={classNameString}
+        style={{ width, height, fontSize }}
+        onChange={(event) => callback(event.target.value)}
+        placeholder={placeholder}
+        type={type}
+        value={value}
+        onInvalid={(event) => event.preventDefault()}
+        required={required}
+        autoComplete="off"
+        name={label}
+        aria-label={label}
+        data-testid={
+          otherProps["data-testid"] ? otherProps["data-testid"] : "input"
+        }
+        pattern={pattern}
+      />
+    ),
+    [value, className]
   );
 }
 
