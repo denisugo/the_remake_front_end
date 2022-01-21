@@ -10,7 +10,7 @@ describe("NewProduct", () => {
   let wrapper;
   let props;
 
-  //* Mock body object
+  //   * Mock body object
   //   const body = {
   //     name: "",
   //     description: "",

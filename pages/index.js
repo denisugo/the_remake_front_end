@@ -15,6 +15,16 @@ function Home({ list, user }) {
   return (
     <>
       <Meta title="Main page" description="test" />
+      {process.env.NEXT_PUBLIC_NODE_ENV === "production" && (
+        <div style={{ background: "#d3aa14", padding: 10, margin: 10 }}>
+          <h2>IMPORTANT NOTE</h2>
+          <p>
+            {
+              "herokuapp.com is included in the Mozilla Foundation’s Public Suffix List. This list is used in recent versions of several browsers, such as Firefox, Chrome and Opera, to limit how broadly a cookie may be scoped. In other words, in browsers that support the functionality, applications in the herokuapp.com domain are prevented from setting cookies for _.herokuapp.com. Note that _.herokuapp.com cookies can currently be set in Internet Explorer, but this behavior should not be relied upon and may change in the future. Therefore this app doesn't have an ability to set all necessary cookies while it is hosted on Heroku with an its default domain."
+            }
+          </p>
+        </div>
+      )}
       <Header />
       <Search list={list} callback={setProductList} />
       <ProductList list={productList} />
@@ -32,12 +42,14 @@ export default Home;
 //TODO: Add decryption of JWT and retrieve a user
 export const getServerSideProps = async (context) => {
   //* Display all env vars
-  console.log("process.env.NEXT_PUBLIC_HOST", process.env.NEXT_PUBLIC_HOST);
-  console.log("process.env.NEXT_PUBLIC_THIS", process.env.NEXT_PUBLIC_THIS);
-  console.log(
-    "process.env.NEXT_PUBLIC_STRIPE_PK",
-    process.env.NEXT_PUBLIC_STRIPE_PK
-  );
+  if (process.env.NEXT_PUBIC_NODE_ENV === "production") {
+    console.log("process.env.NEXT_PUBLIC_HOST", process.env.NEXT_PUBLIC_HOST);
+    console.log("process.env.NEXT_PUBLIC_THIS", process.env.NEXT_PUBLIC_THIS);
+    console.log(
+      "process.env.NEXT_PUBLIC_STRIPE_PK",
+      process.env.NEXT_PUBLIC_STRIPE_PK
+    );
+  }
   // export const getServerSideProps = wrapper.getServerSideProps(
   //   (store) => async (context) => {
   // const connectSidCookie = context.req.cookies["connect.sid"];

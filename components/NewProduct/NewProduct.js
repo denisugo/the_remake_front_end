@@ -48,7 +48,7 @@ function NewProduct({ callback }) {
 
     //* Extract a product from the response
     const product = await fetchedProduct.json();
-    console.log(product);
+
     //* Update productList
     callback(product);
     //* Reset all input fields

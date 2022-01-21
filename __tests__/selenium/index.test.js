@@ -280,6 +280,40 @@ describe("Selenium Main page", () => {
       }, 3000);
     });
 
-    it("Should locate the recently added product and delete it", async () => {});
+    it("Should locate the recently added product and delete it", async () => {
+      let products = await findByDataTestSelenium("product", driver);
+      const originalProductLength = products.length;
+      //? This will select the most recent product and click on it
+      const recentlyAddedProduct = products[originalProductLength - 1];
+      recentlyAddedProduct.click();
+
+      //? It should wait until delete button is rendered
+      //? Without wait and try catch it may not work correct all the time,
+      //? not sure why (originally I checked if there is a correct url address)
+      await driver.wait(async () => {
+        //? Now it should locate 'Delete' butoon and click it
+        try {
+          const deleteButton = (
+            await findByDataTestSelenium("delete-button", driver)
+          )[0];
+          deleteButton.click();
+          return true;
+        } catch (error) {}
+      }, 3000);
+
+      //? Copied from Selenium docs
+      //* Wait for the alert to be displayed
+      await driver.wait(until.alertIsPresent());
+      //* Store the alert in a variable
+      const alert = await driver.switchTo().alert();
+      //* Press the OK button
+      await alert.accept();
+
+      await driver.get("http://localhost:3000");
+
+      products = await findByDataTestSelenium("product", driver);
+      //? Now the product should be deleted and product count should be substarcted by 1
+      expect(products.length).toBe(originalProductLength - 1);
+    });
   });
 });
