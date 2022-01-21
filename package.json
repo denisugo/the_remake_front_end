@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "GENERATE_SOURCEMAP=false next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest --watch ./__tests__/pages/ ./__tests__/components/ ./__tests__/getProps/",
