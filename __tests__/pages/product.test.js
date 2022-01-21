@@ -1,6 +1,5 @@
 import product from "../../pages/product";
 import {
-  findByDTextChildren,
   findByDataTest,
   setUp,
   findByComponent,
@@ -9,18 +8,17 @@ import {
 describe("Product page", () => {
   let props;
   let wrapper;
+  let alertMessage;
 
   beforeEach(() => {
-    //  Redux router setup
-    // reactRedux.useSelector = jest.fn().mockReturnValue(false);
-    // UserSlice.selectUser = jest.fn();
-
     //* Global setup
     global.window = {};
     global.window.open = jest.fn();
 
     //* Mock alert
-    global.alert = jest.fn();
+    global.alert = jest.fn((message) => {
+      alertMessage = message;
+    });
 
     //* Reset fetch mock
     fetch.resetMocks();
@@ -35,7 +33,7 @@ describe("Product page", () => {
       price: 100,
       description: "Ahah",
       preview: "www",
-      user: null, //{id:1}
+      user: null,
     };
 
     wrapper = setUp(product, props);
@@ -74,6 +72,14 @@ describe("Product page", () => {
 
       const add = findByComponent("Button", wrapper);
       expect(add.length).toBe(1);
+    });
+    it("Should render 'Delete' button", () => {
+      //* Set user object
+      props.user = { id: 1, is_admin: true };
+      wrapper = setUp(product, props);
+
+      const deleteButton = findByDataTest("delete-button", wrapper);
+      expect(deleteButton.length).toBe(1);
     });
   });
   describe("Redirecting", () => {
@@ -134,6 +140,48 @@ describe("Product page", () => {
       //* locate quantity input after the wrapper update
       quantity = findByComponent("Input", wrapper);
       expect(quantity.prop("value")).toBe(1);
+    });
+  });
+
+  describe("Deleting a product", () => {
+    it("Should delete a product", async () => {
+      //? Mocking fetch
+      fetch.mockResolvedValueOnce({
+        ok: true,
+      });
+      //* Remock a user
+      props.user = { id: 1, is_admin: true };
+      wrapper = setUp(product, props);
+
+      //* Locate delete button and click it
+      const deleteButton = findByDataTest("delete-button", wrapper);
+      deleteButton.first().dive().simulate("click");
+
+      //? This will execute async function in product.js immidiately
+      await new Promise((res) => setImmediate(res));
+
+      expect(global.alert.mock.calls.length).toBe(1);
+      expect(alertMessage).toBe("Item was deleted");
+    });
+    it("Should NOT delete a product", async () => {
+      //? Mocking fetch
+      fetch.mockResolvedValueOnce({
+        ok: false,
+      });
+
+      //* Remock a user
+      props.user = { id: 1, is_admin: true };
+      wrapper = setUp(product, props);
+
+      //* Locate delete button and click it
+      const deleteButton = findByDataTest("delete-button", wrapper);
+      deleteButton.first().dive().simulate("click");
+
+      //? This will execute async function in product.js immidiately
+      await new Promise((res) => setImmediate(res));
+
+      expect(global.alert.mock.calls.length).toBe(1);
+      expect(alertMessage).toBe("Error happened, please try again");
     });
   });
 });

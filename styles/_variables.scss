@@ -1,5 +1,6 @@
 //* Color palette
 $backgroundColor: #f9f9fa;
+$backgroundColorTransparent: #f9f9fa77;
 $textColor: #324248;
 $mainColor: #919ed0;
 $borderColor: #696c75;
@@ -11,6 +12,9 @@ $cancelColor: #d25314;
 $attentionColor: #d25314;
 $deliveredColor: #10b110;
 $processingColor: #d3aa14;
+
+//* NavBar height
+$navHeight: 130px;
 
 //* Sass variables that define breakpoint values
 $breakpoints: (

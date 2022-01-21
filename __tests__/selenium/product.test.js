@@ -7,7 +7,7 @@ const {
 
 const driver = new Builder().forBrowser("chrome").build();
 
-//!   Before running this test, make sure that this record is not already created!!!
+//!   Before running this test, make sure that this record (in 'carts' table) is not already created!!!
 
 //TODO: test with user admin cookie,
 describe("Selenium Product page", () => {

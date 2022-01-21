@@ -1,5 +1,4 @@
 const { Builder, until } = require("selenium-webdriver");
-const { selectUserError } = require("../../features/UserSlice/UserSlice");
 const {
   findByDataTestSelenium,
   findByComponentSelenium,
@@ -9,6 +8,7 @@ const driver = new Builder().forBrowser("chrome").build();
 
 //TODO: test with user admin cookie,
 describe("Selenium Main page", () => {
+  //* Credentials
   const nonAdminUsername = "davy000";
   const nonAdminPassword = "treasure";
   const adminUsername = "jb";
@@ -17,6 +17,7 @@ describe("Selenium Main page", () => {
 
   beforeAll(async () => {
     await driver.get("http://localhost:3000");
+    await driver.manage().addCookie({ name: "CookieConsent", value: "true" });
   });
 
   afterAll(async () => {
@@ -27,12 +28,6 @@ describe("Selenium Main page", () => {
   });
 
   describe("User flow", () => {
-    //* Credentials
-    const nonAdminUsername = "davy000";
-    const nonAdminPassword = "treasure";
-    const adminUsername = "jb";
-    const adminPassword = "secret";
-
     it("Should open main page", async () => {
       //* Page title
       const title = await driver.getTitle();
@@ -45,6 +40,7 @@ describe("Selenium Main page", () => {
       expect(logo.length).toBe(1);
     });
 
+    //* Nav bar tests
     it("Should redirect to login page, when no user cookies provided", async () => {
       //* Locate a link to login page and click on it
       //? Link is a Next.js, so I unable to set its data-testid up.
@@ -60,7 +56,7 @@ describe("Selenium Main page", () => {
     });
 
     //? It will create a user cookie for futher updating its details
-    it("Should log in", async () => {
+    it("Should log in (non admin user)", async () => {
       //* Locate inputs and insert credentials
       const usernameField = (
         await findByDataTestSelenium("username-input", driver)
@@ -78,9 +74,18 @@ describe("Selenium Main page", () => {
 
       //* Wait for redirection
       await driver.wait(until.urlIs("http://localhost:3000/user"), 3000);
+    });
 
+    it("Should NOT render 'Add new product' button", async () => {
       //? Going back to the main page
       await driver.get("http://localhost:3000/");
+
+      //* Locate 'Add new product' button
+      const addNewProductButton = await findByDataTestSelenium(
+        "add-button",
+        driver
+      );
+      expect(addNewProductButton.length).toBe(0);
     });
 
     it("Should redirect to user page, when user cookies provided", async () => {
@@ -169,6 +174,146 @@ describe("Selenium Main page", () => {
         const testUrl = new RegExp("http://localhost:3000/product", "i");
         return testUrl.exec(await driver.getCurrentUrl());
       }, 3000);
+    });
+  });
+
+  describe(" Admin user flow", () => {
+    beforeAll(async () => {
+      await driver.get("http://localhost:3000");
+      await driver.manage().deleteAllCookies();
+      //* Should hide cookie consent message
+      await driver.manage().addCookie({ name: "CookieConsent", value: "true" });
+    });
+
+    it("Should log admin user in", async () => {
+      //* Locate a link to login page and click on it
+      //? Link is a Next.js, so I unable to set its data-testid up.
+      //? Therefore, selecting with array indeces is used here.
+      const navigation = await findByDataTestSelenium("navigation", driver);
+      expect(navigation.length).toBe(1);
+      const link = (await findByComponentSelenium("a", navigation[0]))[2]; //  user link
+
+      link.click();
+
+      //* Wait for redirection
+      await driver.wait(until.urlIs("http://localhost:3000/login"), 3000);
+
+      //* Locate inputs and insert credentials
+      const usernameField = (
+        await findByDataTestSelenium("username-input", driver)
+      )[0];
+      const passwordField = (
+        await findByDataTestSelenium("password-input", driver)
+      )[0];
+
+      await usernameField.sendKeys(adminUsername);
+      await passwordField.sendKeys(adminPassword);
+
+      //* Locate login button and click on it
+      const button = (await findByDataTestSelenium("login-button", driver))[0];
+      button.click();
+
+      //* Wait for redirection
+      await driver.wait(until.urlIs("http://localhost:3000/user"), 3000);
+
+      //? Going back to the main page
+      await driver.get("http://localhost:3000/");
+    });
+
+    it("Should open 'Add new product' form and fill it", async () => {
+      const body = {
+        name: "New name product",
+        description: "New description",
+        price: 12,
+        category: "other",
+        prewiev:
+          "https://images.unsplash.com/photo-1635272024672-aaf4810e2f47?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1674&q=80",
+      };
+      //* Wait for redirection
+      await driver.wait(until.urlIs("http://localhost:3000/"), 3000);
+
+      //* Locate 'Add new product' button and click it
+      const addNewProductButton = (
+        await findByDataTestSelenium("add-button", driver)
+      )[0];
+
+      addNewProductButton.click();
+
+      //? the form should appear
+      let form; //= await findByComponentSelenium("form", driver);
+      //expect(form.length).toBe(1);
+      await driver.wait(async () => {
+        form = await findByComponentSelenium("form", driver);
+        return form.length === 1;
+      }, 3000);
+
+      //* Locate all inputs and fill them
+      const nameInput = (await findByDataTestSelenium("name-input", driver))[0];
+      await nameInput.sendKeys(body.name);
+      const descInput = (
+        await findByDataTestSelenium("description-input", driver)
+      )[0];
+      await descInput.sendKeys(body.description);
+      const categoryInput = (
+        await findByDataTestSelenium("category-input", driver)
+      )[0];
+      await categoryInput.sendKeys(body.category);
+      const priceInput = (
+        await findByDataTestSelenium("price-input", driver)
+      )[0];
+      await priceInput.sendKeys(body.price);
+      const previewInput = (
+        await findByDataTestSelenium("preview-input", driver)
+      )[0];
+      await previewInput.sendKeys(body.prewiev);
+
+      //* Locate submit button and click it
+      const submitButton = (
+        await findByDataTestSelenium("submit-button", driver)
+      )[0];
+      submitButton.click();
+
+      // //? the form should disappear
+      await driver.wait(async () => {
+        form = await findByComponentSelenium("form", driver);
+        return form.length === 0;
+      }, 3000);
+    });
+
+    it("Should locate the recently added product and delete it", async () => {
+      let products = await findByDataTestSelenium("product", driver);
+      const originalProductLength = products.length;
+      //? This will select the most recent product and click on it
+      const recentlyAddedProduct = products[originalProductLength - 1];
+      recentlyAddedProduct.click();
+
+      //? It should wait until delete button is rendered
+      //? Without wait and try catch it may not work correct all the time,
+      //? not sure why (originally I checked if there is a correct url address)
+      await driver.wait(async () => {
+        //? Now it should locate 'Delete' butoon and click it
+        try {
+          const deleteButton = (
+            await findByDataTestSelenium("delete-button", driver)
+          )[0];
+          deleteButton.click();
+          return true;
+        } catch (error) {}
+      }, 3000);
+
+      //? Copied from Selenium docs
+      //* Wait for the alert to be displayed
+      await driver.wait(until.alertIsPresent());
+      //* Store the alert in a variable
+      const alert = await driver.switchTo().alert();
+      //* Press the OK button
+      await alert.accept();
+
+      await driver.get("http://localhost:3000");
+
+      products = await findByDataTestSelenium("product", driver);
+      //? Now the product should be deleted and product count should be substarcted by 1
+      expect(products.length).toBe(originalProductLength - 1);
     });
   });
 });

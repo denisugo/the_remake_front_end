@@ -54,6 +54,26 @@ function Product({ id, name, description, price, preview, user }) {
     }
   };
 
+  const handleDelete = async () => {
+    //* Generate url
+    const url = `${process.env.NEXT_PUBLIC_HOST}${endpoints.product(id)}`;
+
+    //* Set up a request
+    //? Body should be converted to type 'application/json'
+    const response = await fetch(url, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+    if (response.ok) {
+      alert("Item was deleted");
+    } else {
+      alert("Error happened, please try again");
+    }
+  };
+
   return (
     <>
       <Meta title={name} description="test" />
@@ -114,6 +134,21 @@ function Product({ id, name, description, price, preview, user }) {
           </div>
         )}
       </div>
+      {user && user.is_admin && (
+        //? Should only be visible when an admin user opens this page
+        <>
+          <Button
+            className={style.service_button}
+            fontSize={17}
+            width={150}
+            height={50}
+            text="Delete product"
+            label="Delete"
+            callback={handleDelete}
+            data-testid="delete-button"
+          />
+        </>
+      )}
     </>
   );
 }

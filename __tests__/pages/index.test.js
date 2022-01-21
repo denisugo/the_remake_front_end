@@ -10,7 +10,7 @@ describe("Index page", () => {
   const props = {
     user: null,
     list: [],
-    isMobile: false,
+    // isMobile: false,
   };
 
   const wrapper = setUp(App, props);
