@@ -1,9 +1,9 @@
-import product from "../../pages/product";
+import product from "../../../pages/product";
 import {
   findByDataTest,
   setUp,
   findByComponent,
-} from "../../utils/testUtils.js";
+} from "../../../utils/testUtils.js";
 
 describe("Product page", () => {
   let props;
@@ -23,9 +23,6 @@ describe("Product page", () => {
     //* Reset fetch mock
     fetch.resetMocks();
 
-    //  Next.js router setup
-    //router.default.push = jest.fn();
-
     //* Props setup
     props = {
       id: 9,
@@ -37,6 +34,7 @@ describe("Product page", () => {
     };
 
     wrapper = setUp(product, props);
+    wrapper = findByComponent("ProductDesktop", wrapper).first().dive();
   });
 
   describe("Rendering", () => {
@@ -66,6 +64,7 @@ describe("Product page", () => {
       //? It should render 'add to cart' button and 'quantity' input
       props.user = { id: 1 };
       wrapper = setUp(product, props);
+      wrapper = findByComponent("ProductDesktop", wrapper).first().dive();
 
       const quantity = findByComponent("Input", wrapper);
       expect(quantity.length).toBe(1);
@@ -77,6 +76,7 @@ describe("Product page", () => {
       //* Set user object
       props.user = { id: 1, is_admin: true };
       wrapper = setUp(product, props);
+      wrapper = findByComponent("ProductDesktop", wrapper).first().dive();
 
       const deleteButton = findByDataTest("delete-button", wrapper);
       expect(deleteButton.length).toBe(1);
@@ -105,7 +105,10 @@ describe("Product page", () => {
     });
     it("Should add item to a cart", () => {
       //* Locate the button and click it
-      const add = findByDataTest("add-to-cart-button", wrapper);
+      const add = findByDataTest(
+        "add-to-cart-button",
+        findByComponent("ProductDesktop", wrapper).first().dive()
+      );
       add.first().dive().simulate("click");
 
       expect(fetch.mock.calls.length).toBe(1);
@@ -113,7 +116,10 @@ describe("Product page", () => {
 
     it("Should change a quantity of a product", () => {
       //* locate quantity input and insert a new value
-      let quantity = findByDataTest("quantity-input", wrapper);
+      let quantity = findByDataTest(
+        "quantity-input",
+        findByComponent("ProductDesktop", wrapper).first().dive()
+      );
       quantity
         .first()
         .dive()
@@ -123,12 +129,18 @@ describe("Product page", () => {
       wrapper.update();
 
       //* locate quantity input after the wrapper update
-      quantity = findByComponent("Input", wrapper);
+      quantity = findByComponent(
+        "Input",
+        findByComponent("ProductDesktop", wrapper).first().dive()
+      );
       expect(quantity.prop("value")).toBe(2);
     });
     it("Should NOT change a quantity of a product", () => {
       //* locate quantity input and insert a new value
-      let quantity = findByDataTest("quantity-input", wrapper);
+      let quantity = findByDataTest(
+        "quantity-input",
+        findByComponent("ProductDesktop", wrapper).first().dive()
+      );
       quantity
         .first()
         .dive()
@@ -138,7 +150,10 @@ describe("Product page", () => {
       wrapper.update();
 
       //* locate quantity input after the wrapper update
-      quantity = findByComponent("Input", wrapper);
+      quantity = findByComponent(
+        "Input",
+        findByComponent("ProductDesktop", wrapper).first().dive()
+      );
       expect(quantity.prop("value")).toBe(1);
     });
   });
@@ -152,6 +167,7 @@ describe("Product page", () => {
       //* Remock a user
       props.user = { id: 1, is_admin: true };
       wrapper = setUp(product, props);
+      wrapper = findByComponent("ProductDesktop", wrapper).first().dive();
 
       //* Locate delete button and click it
       const deleteButton = findByDataTest("delete-button", wrapper);
@@ -172,6 +188,7 @@ describe("Product page", () => {
       //* Remock a user
       props.user = { id: 1, is_admin: true };
       wrapper = setUp(product, props);
+      wrapper = findByComponent("ProductDesktop", wrapper).first().dive();
 
       //* Locate delete button and click it
       const deleteButton = findByDataTest("delete-button", wrapper);

@@ -13,7 +13,10 @@ describe("getServerSideProps in product.js", () => {
 
     //* Setup context
     context = {
-      req: { cookies: { "connect.sid": "asswa", user: "assw" } },
+      req: {
+        cookies: { "connect.sid": "asswa", user: "assw" },
+        headers: { "user-agent": "android" },
+      },
       query: {
         id: 1,
         name: "alacazar",
