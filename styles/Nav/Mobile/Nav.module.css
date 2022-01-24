@@ -1,0 +1,48 @@
+.nav {
+  width: 100vw;
+  height: 100px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: #919ed0;
+}
+
+.nav .logo {
+  width: 60px;
+  height: 60px;
+  display: block;
+  margin: auto 10px;
+}
+
+.nav .navigation {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin: auto 10px;
+}
+
+.nav .navigation a {
+  color: #324248;
+  font-size: 1.75rem;
+  margin: auto 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.nav .navigation a:hover {
+  color: #d1d3db;
+}
+/*# sourceMappingURL=Nav.module.css.map */

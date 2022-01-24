@@ -1,39 +1,30 @@
-@import "../variables";
+@import "../../variables";
 
 .nav {
   width: 100vw;
-  height: $navHeight;
+  height: $navHeightMobile;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: $mainColor;
 
   .logo {
-    width: 120px;
-    height: 120px;
+    width: 60px;
+    height: 60px;
     display: block;
-    margin: auto 30px;
-
-    // .image {
-    //   object-fit: cover;
-    // }
+    margin: auto 10px;
   }
 
   .navigation {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: auto 30px;
-
-    // .underlined {
-    //   text-decoration: underline;
-    //   text-decoration-color: $borderColor;
-    // }
+    margin: auto 10px;
 
     a {
       color: $textColor;
-      font-size: 2rem;
-      margin: auto 20px;
+      font-size: 1.75rem;
+      margin: auto 15px;
       display: flex;
 
       &:hover {

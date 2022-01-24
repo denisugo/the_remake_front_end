@@ -1,16 +1,17 @@
-import Nav from "../../components/Nav/Nav.js";
-import { routes } from "../../config/constants.js";
+import Nav from "../../../components/Nav/Nav.js";
+import { routes } from "../../../config/constants.js";
 import {
   findByComponent,
   findByDataTest,
   findByDTextChildren,
   setUp,
-} from "../../utils/testUtils.js";
+} from "../../../utils/testUtils.js";
 
 describe("Nav", () => {
-  const props = { user: null };
+  const props = { user: null, isMobile: true };
 
-  const wrapper = setUp(Nav, props);
+  let wrapper = setUp(Nav, props);
+  wrapper = findByComponent("NavMobile", wrapper).first().dive();
 
   it("Should render the nav", () => {
     const nav = findByDataTest("nav", wrapper);
@@ -34,9 +35,10 @@ describe("Nav", () => {
 
   it("Should render link to /user", () => {
     //* reassign values
-    const props = { user: { id: 1 } };
+    const props = { user: { id: 1 }, isMobile: true };
 
-    const wrapper = setUp(Nav, props);
+    let wrapper = setUp(Nav, props);
+    wrapper = findByComponent("NavMobile", wrapper).first().dive();
 
     const user = findByComponent("Link", wrapper).at(2);
     expect(user.length).toBe(1);

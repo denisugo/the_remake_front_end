@@ -1,4 +1,4 @@
-@import "../variables";
+@import "../../variables";
 
 .user_details {
   width: fit-content;
@@ -11,7 +11,7 @@
     align-items: center;
     margin: 10px;
     .detail_item_text {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       font-weight: bold;
       margin-right: 20px;
 
@@ -21,6 +21,7 @@
     }
   }
 }
+
 .edit_box {
   display: flex;
   flex-direction: column;
@@ -30,7 +31,7 @@
   position: absolute;
   width: 100vw;
   height: 100vh;
-  top: 130px;
+  top: $navHeightMobile;
 
   p {
     padding: 10px;
