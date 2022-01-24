@@ -1,7 +1,8 @@
 import React from "react";
 
+import jwt from "jsonwebtoken";
 import Meta from "../components/Head/Meta";
-import { endpoints, routes } from "../config/constants";
+import { endpoints, routes, jwtConfig } from "../config/constants";
 import style from "../styles/Orders/Orders.module.css";
 
 function Orders({ items }) {
@@ -81,8 +82,12 @@ export const getServerSideProps = async (context) => {
   //? If fetched successfully, retrieve cart items array
   if (fetchedItems.ok) items = await fetchedItems.json();
 
+  //? Here it is necessary to decode a user object, recieved from cookie
+  const user = jwt.verify(context.req.cookies.user, jwtConfig.key);
+
   return {
     props: {
+      user,
       items,
     },
   };

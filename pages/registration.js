@@ -10,6 +10,8 @@ import Input from "../components/Input/Input";
 import { endpoints, jwtConfig, routes } from "../config/constants";
 import style from "../styles/Registration/Registration.module.css";
 
+//! This page doesn't require a mobile version right now
+
 function Registration(props) {
   //* Inputs setup
   const [username, setUsername] = useState("");
@@ -186,3 +188,16 @@ function Registration(props) {
 }
 
 export default Registration;
+
+export const getServerSideProps = async (context) => {
+  //? Check a device type
+  let isMobile = false;
+  const agent = context.req.headers["user-agent"].toLowerCase();
+  if (/android/.exec(agent) || /iphone/.exec(agent)) isMobile = true;
+
+  return {
+    props: {
+      isMobile,
+    },
+  };
+};

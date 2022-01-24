@@ -5,8 +5,8 @@ import jwt from "jsonwebtoken";
 import { jwtConfig, routes } from "../config/constants";
 
 import useUser from "../hooks/useUser";
-import UserDesktop from "../containers/desktop/UserDesktop";
-import UserMobile from "../containers/mobile/UserMobile";
+import UserDesktop from "../containers/Desktop/UserDesktop";
+import UserMobile from "../containers/Mobile/UserMobile";
 
 function User({ user, isMobile }) {
   const props = useUser(user);
