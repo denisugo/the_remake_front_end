@@ -7,7 +7,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest --watch ./__tests__/pages/ ./__tests__/components/ ./__tests__/getProps/",
-    "selenium": "jest ./__tests__/selenium/user.test.js"
+    "selenium": "jest ./__tests__/selenium/checkout.test.js"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^1.7.0",
