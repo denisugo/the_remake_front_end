@@ -1,14 +1,13 @@
-import cart from "../../pages/cart";
+import cart from "../../../pages/cart";
 import * as router from "next/router";
 import {
   findByDTextChildren,
   findByDataTest,
   setUp,
   findByComponent,
-} from "../../utils/testUtils.js";
+} from "../../../utils/testUtils.js";
 
 describe("Cart page", () => {
-  let props;
   let wrapper;
 
   beforeEach(() => {
@@ -28,8 +27,10 @@ describe("Cart page", () => {
           { quantity: 4, price: 25 },
         ],
         user: {},
+        isMobile: true,
       };
       wrapper = setUp(cart, props);
+      wrapper = findByComponent("CartMobile", wrapper).first().dive();
     });
 
     it("Should render cart page", () => {
@@ -66,8 +67,10 @@ describe("Cart page", () => {
           { quantity: 4, price: 25 },
         ],
         user: {},
+        isMobile: true,
       };
       wrapper = setUp(cart, props);
+      wrapper = findByComponent("CartMobile", wrapper).first().dive();
     });
 
     it("Should redirect to order page", () => {
@@ -94,6 +97,7 @@ describe("Cart page", () => {
           { quantity: 4, price: 25, product_id: 3 },
         ],
         user: {},
+        isMobile: true,
       };
       wrapper = setUp(cart, props);
     });
@@ -105,7 +109,10 @@ describe("Cart page", () => {
       });
 
       //* Locate cancel button and click it
-      const cancelButton = findByDataTest("cancel-button", wrapper);
+      const cancelButton = findByDataTest(
+        "cancel-button",
+        findByComponent("CartMobile", wrapper).first().dive()
+      );
       cancelButton.first().dive().simulate("click");
 
       //? This will execute async function in cart.js immidiately
@@ -115,7 +122,10 @@ describe("Cart page", () => {
       wrapper.update();
 
       //? There should be two items with id=2 and id=3
-      const preview = findByDataTest("preview", wrapper);
+      const preview = findByDataTest(
+        "preview",
+        findByComponent("CartMobile", wrapper).first().dive()
+      );
       expect(preview.length).toBe(2);
     });
 
@@ -126,7 +136,10 @@ describe("Cart page", () => {
       });
 
       //* Locate cancel button and click it
-      const cancelButton = findByDataTest("cancel-button", wrapper);
+      const cancelButton = findByDataTest(
+        "cancel-button",
+        findByComponent("CartMobile", wrapper).first().dive()
+      );
       cancelButton.first().dive().simulate("click");
 
       //? This will execute async function in cart.js immidiately
@@ -135,7 +148,10 @@ describe("Cart page", () => {
       //* Update wrapper
       wrapper.update();
 
-      const preview = findByDataTest("preview", wrapper);
+      const preview = findByDataTest(
+        "preview",
+        findByComponent("CartMobile", wrapper).first().dive()
+      );
       expect(preview.length).toBe(3);
     });
   });
