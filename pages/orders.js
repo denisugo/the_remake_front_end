@@ -3,52 +3,15 @@ import React from "react";
 import jwt from "jsonwebtoken";
 import Meta from "../components/Head/Meta";
 import { endpoints, routes, jwtConfig } from "../config/constants";
-import style from "../styles/Orders/Orders.module.css";
+import OrdersDesktop from "../containers/Desktop/OrdersDesktop";
+import OrdersMobile from "../containers/Mobile/OrdersMobile";
 
-function Orders({ items }) {
+function Orders({ items, isMobile }) {
   return (
     <>
       <Meta title="Orders" description="test" />
-      <div className={style.orders}>
-        {Object.entries(items).map(([key, value]) => {
-          return (
-            <div className={style.order} data-testid="order" key={key}>
-              <div className={style.order_details} data-testid="order-details">
-                <h2 className={style.order_id}>Order id: {key}</h2>
-
-                <p
-                  className={`${style.status} ${
-                    value.shipped ? style.delivered : ""
-                  }`}
-                >
-                  Shipment status: {value.shipped ? "Delivered" : "Processing"}
-                </p>
-              </div>
-              <div className={style.products} data-testid="products">
-                {value.products.map((product) => {
-                  return (
-                    <div
-                      className={style.product}
-                      data-testid="product"
-                      key={product.product_id}
-                    >
-                      <h3 className={style.name} data-testid="name">
-                        {product.name}
-                      </h3>
-                      <p className={style.quantity} data-testid="quantity">
-                        Quantity: {product.quantity}
-                      </p>
-                      <p className={style.product_id} data-testid="product-id">
-                        Product id: {product.product_id}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {!isMobile && <OrdersDesktop items={items} />}
+      {isMobile && <OrdersMobile items={items} />}
     </>
   );
 }
@@ -85,10 +48,16 @@ export const getServerSideProps = async (context) => {
   //? Here it is necessary to decode a user object, recieved from cookie
   const user = jwt.verify(context.req.cookies.user, jwtConfig.key);
 
+  //? Check a device type
+  let isMobile = false;
+  const agent = context.req.headers["user-agent"].toLowerCase();
+  if (/android/.exec(agent) || /iphone/.exec(agent)) isMobile = true;
+
   return {
     props: {
       user,
       items,
+      isMobile,
     },
   };
 };

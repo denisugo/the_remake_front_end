@@ -1,0 +1,64 @@
+@import "../../variables";
+
+.orders {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .order {
+    width: 95%;
+
+    .order_details {
+      width: 100%;
+      margin: auto auto;
+      display: flex;
+      justify-content: space-between;
+      background-color: $colorOne;
+
+      .order_id {
+        padding: 10px;
+      }
+
+      .status {
+        padding: 10px;
+        width: 255px;
+        background-color: $processingColor;
+      }
+      .delivered {
+        background-color: $deliveredColor;
+      }
+    }
+    .products {
+      width: 90%;
+      margin-left: auto;
+      display: flex;
+      flex-direction: column;
+
+      .product {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 3fr 2fr 2fr;
+        grid-template-rows: auto;
+        grid-template-areas: "name quantity product_id";
+        padding: 20px 0;
+        background-color: $colorTwo;
+
+        .name {
+          align-self: center;
+          padding: 0 10px;
+          grid-area: name;
+        }
+        .quantity {
+          align-self: center;
+          grid-area: quantity;
+        }
+        .product_id {
+          align-self: center;
+          grid-area: product_id;
+          padding: 0 10px 0 20px;
+        }
+      }
+    }
+  }
+}

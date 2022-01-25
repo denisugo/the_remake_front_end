@@ -1,0 +1,101 @@
+.orders {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.orders .order {
+  width: 95%;
+}
+
+.orders .order .order_details {
+  width: 100%;
+  margin: auto auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  background-color: #d1d3db;
+}
+
+.orders .order .order_details .order_id {
+  padding: 10px;
+}
+
+.orders .order .order_details .status {
+  padding: 10px;
+  width: 255px;
+  background-color: #d3aa14;
+}
+
+.orders .order .order_details .delivered {
+  background-color: #10b110;
+}
+
+.orders .order .products {
+  width: 90%;
+  margin-left: auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.orders .order .products .product {
+  width: 100%;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 3fr 2fr 2fr;
+      grid-template-columns: 3fr 2fr 2fr;
+  -ms-grid-rows: auto;
+      grid-template-rows: auto;
+      grid-template-areas: "name quantity product_id";
+  padding: 20px 0;
+  background-color: #ecedf0;
+}
+
+.orders .order .products .product .name {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  padding: 0 10px;
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+  grid-area: name;
+}
+
+.orders .order .products .product .quantity {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+  grid-area: quantity;
+}
+
+.orders .order .products .product .product_id {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+  grid-area: product_id;
+  padding: 0 10px 0 20px;
+}
+/*# sourceMappingURL=Orders.module.css.map */

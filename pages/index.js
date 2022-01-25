@@ -9,6 +9,7 @@ import { endpoints, jwtConfig } from "../config/constants";
 import NewProduct from "../components/NewProduct/NewProduct";
 
 function Home({ list, user }) {
+  //TODO: Add two new containers
   //* State setup
   const [productList, setProductList] = useState(list);
 

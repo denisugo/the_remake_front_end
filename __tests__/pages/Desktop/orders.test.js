@@ -1,10 +1,10 @@
-import orders from "../../pages/orders";
+import orders from "../../../pages/orders";
 import {
   findByDTextChildren,
   findByDataTest,
   setUp,
   findByComponent,
-} from "../../utils/testUtils.js";
+} from "../../../utils/testUtils.js";
 
 describe("Orders page", () => {
   let props;
@@ -27,6 +27,7 @@ describe("Orders page", () => {
       };
 
       wrapper = setUp(orders, props);
+      wrapper = findByComponent("OrdersDesktop", wrapper).first().dive();
     });
 
     it("Should render orders page", () => {
