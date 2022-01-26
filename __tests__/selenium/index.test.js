@@ -6,14 +6,12 @@ const {
 
 const driver = new Builder().forBrowser("chrome").build();
 
-//TODO: test with user admin cookie,
 describe("Selenium Main page", () => {
   //* Credentials
   const nonAdminUsername = "davy000";
   const nonAdminPassword = "treasure";
   const adminUsername = "jb";
   const adminPassword = "secret";
-  //let cookie;
 
   beforeAll(async () => {
     await driver.get("http://localhost:3000");

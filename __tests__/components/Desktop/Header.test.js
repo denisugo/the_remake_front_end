@@ -1,10 +1,10 @@
-import Header from "../../components/Header/Header.js";
+import Header from "../../../components/Header/Desktop/HeaderDesktop";
 import {
   findByComponent,
   findByDataTest,
   findByDTextChildren,
   setUp,
-} from "../../utils/testUtils.js";
+} from "../../../utils/testUtils.js";
 
 describe("Header", () => {
   const wrapper = setUp(Header);

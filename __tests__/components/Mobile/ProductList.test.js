@@ -1,10 +1,9 @@
-import ProductList from "../../components/ProductList/ProductList.js";
+import ProductList from "../../../components/ProductList/Mobile/ProductListMobile";
 import {
   findByComponent,
   findByDataTest,
-  findByDTextChildren,
   setUp,
-} from "../../utils/testUtils.js";
+} from "../../../utils/testUtils.js";
 
 describe("ProductList", () => {
   const props = {

@@ -1,17 +1,13 @@
-import { useState } from "react";
 import jwt from "jsonwebtoken";
 
 import Meta from "../components/Head/Meta";
-import Header from "../components/Header/Header";
-import ProductList from "../components/ProductList/ProductList";
-import Search from "../components/Search/Search";
 import { endpoints, jwtConfig } from "../config/constants";
-import NewProduct from "../components/NewProduct/NewProduct";
+import MainDesktop from "../containers/Desktop/MainDesktop";
+import MainMobile from "../containers/Mobile/MainMobile";
 
-function Home({ list, user }) {
-  //TODO: Add two new containers
-  //* State setup
-  const [productList, setProductList] = useState(list);
+function Home({ list, user, isMobile }) {
+  // //* State setup
+  // const [productList, setProductList] = useState(list);
 
   return (
     <>
@@ -26,14 +22,9 @@ function Home({ list, user }) {
           </p>
         </div>
       )}
-      <Header />
-      <Search list={list} callback={setProductList} />
-      <ProductList list={productList} />
-      {user && user.is_admin && (
-        <NewProduct
-          callback={(newItem) => setProductList([...productList, newItem])}
-        />
-      )}
+
+      {!isMobile && <MainDesktop list={list} user={user} />}
+      {isMobile && <MainMobile list={list} user={user} />}
     </>
   );
 }
@@ -51,6 +42,11 @@ export const getServerSideProps = async (context) => {
     );
   }
 
+  //? Check a device type
+  let isMobile = false;
+  const agent = context.req.headers["user-agent"].toLowerCase();
+  if (/android/.exec(agent) || /iphone/.exec(agent)) isMobile = true;
+
   //? Setting up the product endpoint
   const endpoint = endpoints.products();
   const url = `${process.env.NEXT_PUBLIC_HOST}${endpoint}`;
@@ -63,6 +59,7 @@ export const getServerSideProps = async (context) => {
     return {
       props: {
         list: [],
+        isMobile,
       },
     };
 
@@ -77,6 +74,7 @@ export const getServerSideProps = async (context) => {
       props: {
         list: jsonResponse,
         user,
+        isMobile,
       },
     };
   }
@@ -85,6 +83,7 @@ export const getServerSideProps = async (context) => {
   return {
     props: {
       list: jsonResponse,
+      isMobile,
     },
   };
 };

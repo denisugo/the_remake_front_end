@@ -1,7 +1,7 @@
-import Product from "../Product/Product";
-import style from "../../styles/ProductList/ProductList.module.css";
+import Product from "../../Product/Product";
+import style from "../../../styles/ProductList/Desktop/ProductList.module.css";
 
-function ProductList({ list }) {
+function ProductListDesktop({ list }) {
   return (
     <div className={style.container} data-testid="productlist">
       {list.map((product) => (
@@ -18,4 +18,4 @@ function ProductList({ list }) {
   );
 }
 
-export default ProductList;
+export default ProductListDesktop;
