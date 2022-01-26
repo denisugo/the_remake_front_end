@@ -1,4 +1,5 @@
 import { getServerSideProps } from "../../pages/orders";
+import * as jwt from "jsonwebtoken";
 
 describe("getServerSideProps in product.js", () => {
   let context;
@@ -7,9 +8,15 @@ describe("getServerSideProps in product.js", () => {
     //* Setup fetch
     fetch.resetMocks();
 
+    //* jwt setup
+    jwt.default.verify = jest.fn();
+
     //* Setup context
     context = {
-      req: { cookies: { "connect.sid": "asswa", user: "assw" } },
+      req: {
+        cookies: { "connect.sid": "asswa", user: "assw" },
+        headers: { "user-agent": "android" },
+      },
     };
   });
 

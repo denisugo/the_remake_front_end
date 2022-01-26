@@ -1,5 +1,4 @@
 const { Builder, until, By } = require("selenium-webdriver");
-const { selectUserError } = require("../../features/UserSlice/UserSlice");
 const {
   findByDataTestSelenium,
   findByComponentSelenium,
@@ -9,7 +8,7 @@ const driver = new Builder().forBrowser("chrome").build();
 
 //! Ensure that admin user has some items in their cart
 //! Non admin user has to have an empty cart
-//! It is strongly recomended to add only one item to the cart befor running this test
+//! It is strongly recomended to add only one item to the cart before running this test
 
 describe("Selenium Cart page", () => {
   //* Test card numbers

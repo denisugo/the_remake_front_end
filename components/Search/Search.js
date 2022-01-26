@@ -20,7 +20,6 @@ function Search({ list, callback }) {
 
   return (
     <div className={style.search} data-testid="search">
-      {/* TODO: Add onchange*/}
       Select category
       <select
         className={style.select_by_category}
@@ -42,7 +41,6 @@ function Search({ list, callback }) {
           Other
         </option>
       </select>
-      {/* TODO: Add select by category component*/}
       or
       <Input
         placeholder="Start typing a name"

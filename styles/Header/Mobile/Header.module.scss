@@ -1,0 +1,61 @@
+@import "../../variables";
+
+.header {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .pills {
+    width: 100%;
+    height: fit-content;
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 4rem;
+
+    .image {
+      width: 30%;
+      height: fit-content;
+      display: block;
+      margin-bottom: 20px;
+    }
+    .description {
+      color: $textColor;
+      text-align: justify;
+      word-wrap: break-word;
+      width: 90%;
+      font-size: 1.2rem;
+      line-height: 1.5rem;
+    }
+  }
+
+  .tabs {
+    width: 100%;
+    height: fit-content;
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 4rem;
+
+    .image {
+      width: 60%;
+      height: fit-content;
+      display: block;
+      margin-bottom: 20px;
+    }
+    .description {
+      color: $textColor;
+      text-align: justify;
+      word-wrap: break-word;
+      width: 90%;
+      font-size: 1.2rem;
+      line-height: 1.5rem;
+    }
+  }
+}

@@ -12,6 +12,8 @@ import style from "../styles/Login/Login.module.css";
 import { endpoints, jwtConfig, routes } from "../config/constants";
 import { FacebookIcon } from "../components/Icons";
 
+//! This page doesn't require a mobile version right now
+
 function Login(props) {
   //* Inputs setup
   const [username, setUsername] = useState("");
@@ -140,11 +142,16 @@ function Login(props) {
 export default Login;
 
 export const getServerSideProps = async (context) => {
+  //? Check a device type
+  let isMobile = false;
+  const agent = context.req.headers["user-agent"].toLowerCase();
+  if (/android/.exec(agent) || /iphone/.exec(agent)) isMobile = true;
+
   //? Check if connect.sid cookie is set
   //? If so, try to retrieve a user
   if (!context.req.cookies["connect.sid"])
     return {
-      props: {},
+      props: { isMobile },
     };
 
   //* Retrieving a user
@@ -167,7 +174,7 @@ export const getServerSideProps = async (context) => {
       "user=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
     ]);
     return {
-      props: {},
+      props: { isMobile },
     };
   }
 

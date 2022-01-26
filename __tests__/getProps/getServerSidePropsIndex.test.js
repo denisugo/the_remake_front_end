@@ -13,7 +13,7 @@ describe("getServerSideProps in index.js", () => {
 
     //* Setup for context
     context = {
-      req: { cookies: { user: "asswa" } },
+      req: { cookies: { user: "asswa" }, headers: { "user-agent": "android" } },
       // res: { setHeader: jest.fn() },
     };
   });

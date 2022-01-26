@@ -61,6 +61,8 @@ NEXT_PUBLIC_HOST= http://localhost:4000/api/v1
 NEXT_PUBLIC_THIS= http://localhost:3000
 SNEXT_PUBLIC_TRIPE_PK= our_Stripe_PK_Key
 
+NEXT_PUBLIC_NODE_ENV= development
+
 ```
 
 ## Preview

@@ -3,13 +3,14 @@ import { loadStripe } from "@stripe/stripe-js";
 
 import jwt from "jsonwebtoken";
 
-import CheckoutForm from "../components/CheckoutForm/CheckoutForm";
 import Meta from "../components/Head/Meta";
 import { jwtConfig, routes } from "../config/constants";
+import CheckoutDesktop from "../containers/Desktop/CheckoutDesktop";
+import CheckoutMobile from "../containers/Mobile/CheckoutMobile";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PK);
 
-function Checkout({ user }) {
+function Checkout({ user, isMobile }) {
   //TODO: Check this warning: Unsupported prop change on Elements: You cannot change the `stripe` prop after setting it.
 
   //* Setup strip appearence
@@ -29,7 +30,20 @@ function Checkout({ user }) {
           stripe={stripePromise}
           data-testid="elements"
         >
-          <CheckoutForm user={user} />
+          {!isMobile && (
+            <CheckoutDesktop
+              options={options}
+              user={user}
+              stripePromise={stripePromise}
+            />
+          )}
+          {isMobile && (
+            <CheckoutMobile
+              options={options}
+              user={user}
+              stripePromise={stripePromise}
+            />
+          )}
         </Elements>
       )}
     </>
@@ -52,9 +66,15 @@ export const getServerSideProps = async (context) => {
   //? Here it is necessary to decode a user object, recieved from cookie
   const user = jwt.verify(context.req.cookies.user, jwtConfig.key);
 
+  //? Check a device type
+  let isMobile = false;
+  const agent = context.req.headers["user-agent"].toLowerCase();
+  if (/android/.exec(agent) || /iphone/.exec(agent)) isMobile = true;
+
   return {
     props: {
       user,
+      isMobile,
     },
   };
 };

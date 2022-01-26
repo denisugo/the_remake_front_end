@@ -1,0 +1,11 @@
+This app has two versions: mobile and desktop. Therefore, some tests
+should be divided into two separated test suits: one for mobile and
+one for desktop. 
+
+Those tests have "wrapper issue": if a test requires a call to wrapper.update(),
+it should not modify a wrapper object.
+So, findByComponent("[Desktop or Mobile component name]", wrapper).first().dive()
+should be used within a test body. If a test doesn't require an update of a wrapper
+object, then redefining of wrapper with
+wrapper = findByComponent("CartDesktop", wrapper).first().dive();
+within beforeEach(...) is allowed.

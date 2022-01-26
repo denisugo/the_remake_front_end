@@ -20,7 +20,9 @@ function NewProduct({ callback }) {
     setVisible(!visible);
   };
   //* Handle form submission
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     //* Generate body
     const body = {
       name,
@@ -64,7 +66,7 @@ function NewProduct({ callback }) {
   return (
     <>
       {!visible && (
-        <div>
+        <div className={style.add_button}>
           <Button
             text={"Add new product"}
             label="New product"
@@ -78,7 +80,7 @@ function NewProduct({ callback }) {
       )}
       {visible && (
         <div className={style.form_container}>
-          <form onSubmit={() => handleSubmit()} className={style.form}>
+          <form onSubmit={handleSubmit} className={style.form}>
             <Input
               placeholder="name"
               value={name}
