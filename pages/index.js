@@ -6,14 +6,18 @@ import MainDesktop from "../containers/Desktop/MainDesktop";
 import MainMobile from "../containers/Mobile/MainMobile";
 
 function Home({ list, user, isMobile }) {
-  // //* State setup
-  // const [productList, setProductList] = useState(list);
-
   return (
     <>
       <Meta title="Main page" description="test" />
       {process.env.NEXT_PUBLIC_NODE_ENV === "production" && (
-        <div style={{ background: "#d3aa14", padding: 10, margin: 10 }}>
+        <div
+          style={{
+            background: "#d3aa14",
+            padding: 10,
+            margin: 20,
+            lineHeight: "1.5rem",
+          }}
+        >
           <h2>IMPORTANT NOTE!!!</h2>
           <p>
             {
