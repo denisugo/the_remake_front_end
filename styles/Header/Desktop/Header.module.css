@@ -71,7 +71,7 @@
 }
 
 .header .tabs .image {
-  width: 50%;
+  width: 30%;
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
@@ -82,7 +82,7 @@
   color: #324248;
   text-align: justify;
   word-wrap: break-word;
-  width: 40%;
+  width: 60%;
   font-size: 1.75rem;
   line-height: 2.5rem;
 }
